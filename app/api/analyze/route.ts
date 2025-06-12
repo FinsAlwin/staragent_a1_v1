@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { parsePdfToText, parseDocxToText } from "@/services/fileParserService";
-import { analyzeResumeWithGemini } from "@/services/geminiService";
-import { type ExtractionField, type Tag } from "../../../types";
+import {
+  parsePdfToText,
+  parseDocxToText,
+} from "../../../services/fileParserService";
+import { analyzeResumeWithGemini } from "../../../services/geminiService";
+import dbConnect from "../../../lib/db";
+import Tag from "../../../models/Tag";
+import ExtractionField from "../../../models/ExtractionField";
+import {
+  type ExtractionField as ExtractionFieldType,
+  type Tag as TagType,
+} from "../../../types";
 
 // CORS headers for cross-origin requests
 const corsHeaders = {
@@ -69,11 +78,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse extraction fields and tags from form data
-    let extractionFields: ExtractionField[] = [];
-    let availableTags: Tag[] = [];
+    let extractionFields: ExtractionFieldType[] = [];
+    let availableTags: TagType[] = [];
 
     try {
-      extractionFields = JSON.parse(extractionFieldsData) as ExtractionField[];
+      extractionFields = JSON.parse(
+        extractionFieldsData
+      ) as ExtractionFieldType[];
     } catch (error) {
       return NextResponse.json(
         { error: "Invalid extraction fields format. Must be valid JSON." },
@@ -85,7 +96,7 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      availableTags = JSON.parse(tagsData) as Tag[];
+      availableTags = JSON.parse(tagsData) as TagType[];
     } catch (error) {
       return NextResponse.json(
         { error: "Invalid tags format. Must be valid JSON." },

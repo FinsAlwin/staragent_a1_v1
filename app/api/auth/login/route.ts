@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "@/lib/db";
-import User from "@/models/User";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import dbConnect from "../../../../lib/db";
+import User from "../../../../models/User";
+import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 if (!JWT_SECRET) {

@@ -1,3 +1,5 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -17,6 +19,12 @@ const nextConfig = {
   //   return config;
   // },
   webpack: (config, { isServer }) => {
+    // Add path alias resolution
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      '@': path.resolve(__dirname),
+    };
+
     // PDF.js worker configuration
     if (!isServer) {
       config.resolve.alias = {

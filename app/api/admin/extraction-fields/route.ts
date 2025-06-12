@@ -1,11 +1,10 @@
+import dbConnect from "../../../../lib/db";
+import ExtractionField from "../../../../models/ExtractionField";
+import { verifyAuth } from "../../../../lib/auth";
 import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "@/lib/db";
-import ExtractionField from "@/models/ExtractionField";
-import { verifyAuth } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
-    // Verify admin authentication
     const user = await verifyAuth(request);
     if (!user || user.role !== "admin") {
       return NextResponse.json(
@@ -15,11 +14,11 @@ export async function GET(request: NextRequest) {
     }
 
     await dbConnect();
-    const fields = await ExtractionField.find({});
-    return NextResponse.json({ fields });
+    const extractionFields = await ExtractionField.find().sort({ name: 1 });
+    return NextResponse.json(extractionFields);
   } catch (error: any) {
     return NextResponse.json(
-      { error: "Failed to fetch extraction fields" },
+      { error: error.message || "Failed to fetch extraction fields" },
       { status: 500 }
     );
   }
@@ -27,7 +26,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Verify admin authentication
     const user = await verifyAuth(request);
     if (!user || user.role !== "admin") {
       return NextResponse.json(
@@ -36,33 +34,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const data = await request.json();
+    const { name, description } = await request.json();
 
-    // Validate required fields
-    if (!data.name || !data.type) {
-      return NextResponse.json(
-        { error: "Name and type are required" },
-        { status: 400 }
-      );
+    if (!name) {
+      return NextResponse.json({ error: "Name is required" }, { status: 400 });
     }
 
     await dbConnect();
 
-    // Check if field with same name already exists
-    const existingField = await ExtractionField.findOne({ name: data.name });
+    // Check if extraction field already exists
+    const existingField = await ExtractionField.findOne({ name });
     if (existingField) {
       return NextResponse.json(
-        { error: "Field with this name already exists" },
+        { error: "Extraction field with this name already exists" },
         { status: 400 }
       );
     }
 
-    // Create new extraction field
-    const field = await ExtractionField.create(data);
-    return NextResponse.json(field, { status: 201 });
+    const extractionField = new ExtractionField({
+      name,
+      description: description || "",
+    });
+
+    await extractionField.save();
+    return NextResponse.json(extractionField, { status: 201 });
   } catch (error: any) {
     return NextResponse.json(
-      { error: "Failed to create extraction field" },
+      { error: error.message || "Failed to create extraction field" },
       { status: 500 }
     );
   }
