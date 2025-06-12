@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    esmExternals: 'loose',
+    serverComponentsExternalPackages: ['mongoose'],
+  },
   // If using pdfjs-dist as a module and need to copy worker file:
   // webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
   //   config.module.rules.push({
@@ -29,8 +33,18 @@ const nextConfig = {
       });
     }
 
+    // Ensure proper path resolution
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+    };
+
     return config;
   },
+  // Disable telemetry for build
+  telemetry: false,
 };
 
 module.exports = nextConfig;
