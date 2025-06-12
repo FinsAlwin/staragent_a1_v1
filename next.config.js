@@ -43,8 +43,6 @@ const nextConfig = {
 
     return config;
   },
-  // Disable telemetry for build
-  telemetry: false,
 };
 
 module.exports = nextConfig;
