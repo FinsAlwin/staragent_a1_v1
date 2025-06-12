@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Additional global styles can go here */
+body {
+  /* Default background if not overridden by components */
+  @apply bg-gray-100;
+}
