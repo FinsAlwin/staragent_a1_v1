@@ -3,6 +3,10 @@ frontend:
   phases:
     preBuild:
       commands:
+        - echo "Clearing cache..."
+        - rm -rf .next
+        - rm -rf node_modules/.cache
+        - rm -rf .cache
         - echo "Setting up Node.js environment..."
         - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
         - export NVM_DIR="$HOME/.nvm"

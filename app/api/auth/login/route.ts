@@ -4,13 +4,17 @@ import connectDB from "../../../../lib/db";
 import User from "../../../../models/User";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
-if (!JWT_SECRET) {
-  throw new Error("JWT_SECRET is not defined");
-}
-
 export async function POST(request: NextRequest) {
   try {
+    // Check JWT_SECRET inside the function
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      return NextResponse.json(
+        { error: "JWT_SECRET environment variable is not defined" },
+        { status: 500 }
+      );
+    }
+
     const { email, password } = await request.json();
 
     if (!email || !password) {
