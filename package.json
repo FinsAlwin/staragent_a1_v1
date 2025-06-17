@@ -16,7 +16,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.830.0",
     "@aws-sdk/s3-request-presigner": "^3.830.0",
-    "@google/genai": "^1.4.0",
+    "@google/genai": "^1.0.0",
     "@types/bcryptjs": "^3.0.0",
     "@types/jsonwebtoken": "^9.0.9",
     "bcryptjs": "^3.0.2",
