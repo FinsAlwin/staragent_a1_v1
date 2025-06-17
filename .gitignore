@@ -151,7 +151,6 @@ certificates/
 *.crt
 
 # AI/ML model files (if any)
-models/
 *.model
 *.bin
 *.onnx
