@@ -1,10 +1,23 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI;
+let MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
   throw new Error(
     "Please define the MONGODB_URI environment variable inside .env.local"
+  );
+}
+
+// Remove any extra quotes from the URI
+MONGODB_URI = MONGODB_URI.replace(/^["']|["']$/g, "");
+
+// Validate the URI format
+if (
+  !MONGODB_URI.startsWith("mongodb://") &&
+  !MONGODB_URI.startsWith("mongodb+srv://")
+) {
+  throw new Error(
+    "Invalid MongoDB URI format. Must start with 'mongodb://' or 'mongodb+srv://'"
   );
 }
 
