@@ -7,6 +7,30 @@ const nextConfig = {
     esmExternals: 'loose',
     serverComponentsExternalPackages: ['mongoose'],
   },
+  images: {
+    domains: ['localhost'],
+    unoptimized: true, // Required for Amplify
+  },
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  },
+  // For AWS Amplify deployment - use standalone for better performance
+  output: 'standalone', // Better for containerized deployments
+  poweredByHeader: false,
+  compress: true,
+  // Handle file uploads and CORS
+  async headers() {
+    return [
+      {
+        source: '/api/:path*',
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET, POST, PUT, DELETE, OPTIONS' },
+          { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
+        ],
+      },
+    ];
+  },
   // If using pdfjs-dist as a module and need to copy worker file:
   // webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
   //   config.module.rules.push({

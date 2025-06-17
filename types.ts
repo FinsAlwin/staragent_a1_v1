@@ -1,6 +1,6 @@
 export enum UserRole {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
+  USER = "USER",
+  ADMIN = "ADMIN",
 }
 
 export interface User {
@@ -34,16 +34,16 @@ export interface AppState {
 }
 
 export type AppAction =
-  | { type: 'LOGIN'; payload: User }
-  | { type: 'LOGOUT' }
-  | { type: 'SET_EXTRACTION_FIELDS'; payload: ExtractionField[] }
-  | { type: 'ADD_EXTRACTION_FIELD'; payload: ExtractionField }
-  | { type: 'UPDATE_EXTRACTION_FIELD'; payload: ExtractionField }
-  | { type: 'DELETE_EXTRACTION_FIELD'; payload: string } // id
-  | { type: 'SET_TAGS'; payload: Tag[] }
-  | { type: 'ADD_TAG'; payload: Tag }
-  | { type: 'UPDATE_TAG'; payload: Tag }
-  | { type: 'DELETE_TAG'; payload: string }; // id
+  | { type: "LOGIN"; payload: User }
+  | { type: "LOGOUT" }
+  | { type: "SET_EXTRACTION_FIELDS"; payload: ExtractionField[] }
+  | { type: "ADD_EXTRACTION_FIELD"; payload: ExtractionField }
+  | { type: "UPDATE_EXTRACTION_FIELD"; payload: ExtractionField }
+  | { type: "DELETE_EXTRACTION_FIELD"; payload: string } // id
+  | { type: "SET_TAGS"; payload: Tag[] }
+  | { type: "ADD_TAG"; payload: Tag }
+  | { type: "UPDATE_TAG"; payload: Tag }
+  | { type: "DELETE_TAG"; payload: string }; // id
 
 export interface AppContextType {
   state: AppState;
@@ -71,4 +71,57 @@ export interface GenerateContentResponseWithGrounding {
   text: string;
   candidates?: Candidate[];
   // Other response fields
+}
+
+// AI Face Matching Types
+export interface StoredImage {
+  id?: string;
+  _id?: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  uploadedAt: Date;
+  uploadedBy: string;
+}
+
+export interface GeminiSimilarityItem {
+  id: string;
+  name?: string; // Optional name field for displaying matched face names
+  similarityScore: number;
+}
+
+export interface FaceDescriptionRequest {
+  model: string;
+  contents: {
+    parts: Array<{
+      inlineData?: {
+        mimeType: string;
+        data: string;
+      };
+      text?: string;
+    }>;
+  };
+}
+
+export interface SimilarityRequest {
+  model: string;
+  contents: {
+    parts: Array<{
+      text: string;
+    }>;
+  };
+  config?: {
+    responseMimeType: string;
+  };
+}
+
+export interface FaceMatchResult {
+  uploadedImageDescription: string;
+  matches: GeminiSimilarityItem[];
+  processingTime: number;
+}
+
+export interface FaceMatchRequest {
+  image: string; // base64 encoded image
+  mimeType: string;
 }

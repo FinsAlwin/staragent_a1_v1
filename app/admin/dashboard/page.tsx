@@ -8,6 +8,7 @@ interface DashboardStats {
   totalUsers: number;
   totalTags: number;
   totalExtractionFields: number;
+  totalStoredFaces?: number;
 }
 
 interface TestResult {
@@ -40,6 +41,7 @@ export default function DashboardPage() {
     totalUsers: 0,
     totalTags: 0,
     totalExtractionFields: 0,
+    totalStoredFaces: 0,
   });
   const [file, setFile] = useState<File | null>(null);
   const [testResults, setTestResults] = useState<TestResult[]>([]);
@@ -77,16 +79,32 @@ export default function DashboardPage() {
       ],
     },
     {
-      id: "coming-soon-1",
+      id: "face-matching",
       title: "AI Face Matching",
       description: "Advanced facial recognition and matching capabilities",
       icon: "👤",
-      status: "inactive",
+      status: "active",
       stats: [
-        { label: "Faces Processed", value: "0" },
-        { label: "Accuracy Rate", value: "0%" },
+        { label: "Stored Faces", value: stats.totalStoredFaces || 0 },
+        { label: "API Status", value: "Active" },
       ],
-      actions: [{ label: "Coming Soon", href: "#", variant: "outline" }],
+      actions: [
+        {
+          label: "Manage Faces",
+          href: "/admin/face-matching",
+          variant: "primary",
+        },
+        {
+          label: "Test Matching",
+          href: "/face-matching",
+          variant: "secondary",
+        },
+        // {
+        //   label: "API Docs",
+        //   href: "/api/face-matching/match",
+        //   variant: "outline",
+        // },
+      ],
     },
     {
       id: "coming-soon-2",
@@ -131,11 +149,29 @@ export default function DashboardPage() {
       const data = await res.json();
       console.log("Admin Dashboard - API response data:", data);
       setStats(data);
+
+      // Fetch face matching stats
+      await fetchFaceMatchingStats();
     } catch (err: any) {
       console.error("Admin Dashboard - Error:", err);
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchFaceMatchingStats = async () => {
+    try {
+      const response = await fetch("/api/admin/face-matching/images");
+      if (response.ok) {
+        const data = await response.json();
+        setStats((prev) => ({
+          ...prev,
+          totalStoredFaces: data.images?.length || 0,
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching face matching stats:", error);
     }
   };
 

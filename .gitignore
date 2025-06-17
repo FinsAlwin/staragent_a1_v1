@@ -176,3 +176,34 @@ docker-compose.override.yml
 # Local configuration
 config.local.js
 config.local.json
+
+# Uploaded files
+/public/uploads/
+uploads/
+
+# AWS Amplify
+amplify/\#current-cloud-backend
+amplify/.config/local-*
+amplify/logs
+amplify/mock-data
+amplify/src/aws-exports.js
+amplify/src/awsconfiguration.json
+amplify/src/graphql/API.ts
+amplify/src/graphql/API.tsx
+amplify/src/graphql/queries.ts
+amplify/src/graphql/queries.tsx
+amplify/src/graphql/mutations.ts
+amplify/src/graphql/mutations.tsx
+amplify/src/graphql/subscriptions.ts
+amplify/src/graphql/subscriptions.tsx
+amplify/src/graphql/schema.json
+amplify/team-provider-info.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
