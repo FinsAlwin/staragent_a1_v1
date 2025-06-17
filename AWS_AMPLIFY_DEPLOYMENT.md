@@ -63,7 +63,7 @@ git push
 
 Amplify will auto-detect Next.js, but verify these settings:
 
-**Build settings:**
+**Build settings (use this if you encounter Node.js issues):**
 
 ```yaml
 version: 1
@@ -72,7 +72,7 @@ frontend:
     preBuild:
       commands:
         - echo "Installing dependencies..."
-        - npm ci
+        - npm ci --legacy-peer-deps --no-audit --ignore-scripts
     build:
       commands:
         - echo "Building the application..."
@@ -172,12 +172,21 @@ The app is configured to store images in `public/uploads/faces/`:
 
 ### **7.1 Common Issues**
 
+**Node.js Version Issues:**
+
+```bash
+# If you see "Unsupported engine" errors:
+# 1. Use the simple build configuration above
+# 2. Or manually set Node.js version in Amplify Console
+# 3. Check that package.json engines field is compatible
+```
+
 **Build Failures:**
 
 ```bash
 # Check build logs in Amplify Console
 # Common fixes:
-npm ci --legacy-peer-deps
+npm ci --legacy-peer-deps --no-audit --ignore-scripts
 ```
 
 **Environment Variables:**
@@ -192,7 +201,50 @@ npm ci --legacy-peer-deps
 - Verify image format support
 - Ensure uploads directory exists
 
-### **7.2 Debug Commands**
+### **7.2 Alternative Build Configurations**
+
+**If the main configuration fails, try this simpler one:**
+
+```yaml
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci --legacy-peer-deps --no-audit --ignore-scripts
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - "**/*"
+```
+
+**For Node.js version issues:**
+
+```yaml
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+        - export NVM_DIR="$HOME/.nvm"
+        - [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        - nvm install 18
+        - nvm use 18
+        - npm ci --legacy-peer-deps --no-audit
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+```
+
+### **7.3 Debug Commands**
 
 ```bash
 # Local testing
