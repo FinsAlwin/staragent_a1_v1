@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "../../../../../lib/db";
-import ExtractionField from "../../../../../models/ExtractionField";
-import { verifyAuth } from "../../../../../lib/auth";
+import dbConnect from "@/lib/db";
+import ExtractionField from "@/models/ExtractionField";
+import { verifyAuth } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,

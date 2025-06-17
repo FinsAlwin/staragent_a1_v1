@@ -14,8 +14,7 @@ const nextConfig = {
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
-  // For AWS Amplify deployment - use standalone for better performance
-  output: 'standalone', // Better for containerized deployments
+  // For AWS Amplify deployment
   poweredByHeader: false,
   compress: true,
   // Handle file uploads and CORS
