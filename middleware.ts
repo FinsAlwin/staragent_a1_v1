@@ -27,6 +27,7 @@ const publicRoutes = [
   "/api/test-basic", // Very basic test route
   "/api/test-import", // Import test route
   "/api/test-login-step", // Login step test route
+  "/api/test-env", // Environment variables test route
 ];
 
 // Function to verify JWT token
