@@ -19,6 +19,8 @@ const publicRoutes = [
   "/api/debug-step", // Step-by-step debug route
   "/api/test-db", // Database test route
   "/api/test-login", // Login test route
+  "/api/test-login-simple", // Simple login test route
+  "/api/test-users-db", // Users database test route
 ];
 
 // Function to verify JWT token
