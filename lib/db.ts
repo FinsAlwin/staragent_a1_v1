@@ -1,26 +1,5 @@
 import mongoose from "mongoose";
 
-let MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  throw new Error(
-    "Please define the MONGODB_URI environment variable inside .env.local"
-  );
-}
-
-// Remove any extra quotes from the URI
-MONGODB_URI = MONGODB_URI.replace(/^["']|["']$/g, "");
-
-// Validate the URI format
-if (
-  !MONGODB_URI.startsWith("mongodb://") &&
-  !MONGODB_URI.startsWith("mongodb+srv://")
-) {
-  throw new Error(
-    "Invalid MongoDB URI format. Must start with 'mongodb://' or 'mongodb+srv://'"
-  );
-}
-
 interface GlobalWithMongoose extends Global {
   mongoose: {
     conn: typeof mongoose | null;
@@ -37,6 +16,28 @@ if (!cached) {
 }
 
 async function dbConnect() {
+  // Check environment variable inside the function
+  let MONGODB_URI = process.env.MONGODB_URI;
+
+  if (!MONGODB_URI) {
+    throw new Error(
+      "Please define the MONGODB_URI environment variable inside .env.local"
+    );
+  }
+
+  // Remove any extra quotes from the URI
+  MONGODB_URI = MONGODB_URI.replace(/^["']|["']$/g, "");
+
+  // Validate the URI format
+  if (
+    !MONGODB_URI.startsWith("mongodb://") &&
+    !MONGODB_URI.startsWith("mongodb+srv://")
+  ) {
+    throw new Error(
+      "Invalid MongoDB URI format. Must start with 'mongodb://' or 'mongodb+srv://'"
+    );
+  }
+
   // If we have a cached connection, check if it's still valid
   if (cached.conn) {
     // Check if the connection is still alive
