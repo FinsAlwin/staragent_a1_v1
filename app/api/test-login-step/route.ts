@@ -58,11 +58,19 @@ export async function POST(request: NextRequest) {
     // Step 2: Connect to database
     try {
       const connectDB = (await import("../../../lib/db")).default;
+      console.log("About to call connectDB...");
       await connectDB();
+      console.log("connectDB completed successfully");
       results.step2.status = "passed";
+      results.step2.details = { message: "Database connected successfully" };
     } catch (error: any) {
+      console.error("Database connection error:", error);
       results.step2.status = "failed";
       results.step2.error = error.message;
+      results.step2.details = {
+        errorType: error.constructor.name,
+        stack: error.stack?.split("\n").slice(0, 3).join("\n"),
+      };
       return NextResponse.json({ success: false, results }, { status: 500 });
     }
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import dbConnect from "../../../../lib/db";
+import connectDB from "../../../../lib/db";
 import User from "../../../../models/User";
 import jwt from "jsonwebtoken";
 
@@ -20,7 +20,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await dbConnect();
+    // Connect to database
+    try {
+      await connectDB();
+    } catch (dbError: any) {
+      console.error("Database connection error:", dbError);
+      return NextResponse.json(
+        { error: "Database connection failed", details: dbError.message },
+        { status: 500 }
+      );
+    }
 
     // Find user by email
     const user = await User.findOne({ email });
@@ -77,6 +86,10 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error: any) {
-    return NextResponse.json({ error: "Login failed" }, { status: 500 });
+    console.error("Login error:", error);
+    return NextResponse.json(
+      { error: "Login failed", details: error.message },
+      { status: 500 }
+    );
   }
 }
