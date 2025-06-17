@@ -37,13 +37,24 @@ if (!cached) {
 }
 
 async function dbConnect() {
+  // If we have a cached connection, check if it's still valid
   if (cached.conn) {
-    return cached.conn;
+    // Check if the connection is still alive
+    if (mongoose.connection.readyState === 1) {
+      return cached.conn;
+    } else {
+      // Connection is dead, clear the cache
+      cached.conn = null;
+      cached.promise = null;
+    }
   }
 
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
     };
 
     cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
