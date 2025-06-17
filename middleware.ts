@@ -14,6 +14,8 @@ const publicRoutes = [
   "/api/analyze",
   "/api/face-matching/match", // Public face matching API
   "/face-matching", // Public face matching demo page
+  "/api/test-simple", // Debug route
+  "/api/debug-env", // Debug route
 ];
 
 // Function to verify JWT token
