@@ -142,20 +142,14 @@ export default function UploadPage() {
     }
   };
 
-  const handleBackToDashboard = () => {
-    const dashboardPath =
-      userRole === "admin" ? "/admin/dashboard" : "/dashboard";
-    router.push(dashboardPath);
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-gray-800/80 backdrop-blur-xl shadow-lg border-b border-gray-700/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
-              <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] to-[#0378c7] rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] via-[#90caf9] to-[#8f93a9] rounded-xl flex items-center justify-center mr-4 shadow-lg">
                 <svg
                   className="w-6 h-6 text-white"
                   fill="none"
@@ -171,43 +165,22 @@ export default function UploadPage() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Upload Resume
-                </h1>
-                <p className="text-sm text-gray-600">
+                <h1 className="text-2xl font-bold text-white">Upload Resume</h1>
+                <p className="text-sm text-gray-300">
                   AI-powered resume analysis
                 </p>
               </div>
             </div>
-            <button
-              onClick={handleBackToDashboard}
-              className="btn-outline text-sm"
-            >
-              <svg
-                className="w-4 h-4 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
-              </svg>
-              Back to Dashboard
-            </button>
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="mb-6 p-4 bg-red-500/20 border border-red-400/30 rounded-2xl backdrop-blur-sm animate-shake">
             <div className="flex items-center">
               <svg
-                className="w-5 h-5 text-red-500 mr-3"
+                className="w-5 h-5 text-red-400 mr-3 animate-pulse"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -219,16 +192,16 @@ export default function UploadPage() {
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm text-red-200 font-medium">{error}</p>
             </div>
           </div>
         )}
 
         {success && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div className="mb-6 p-4 bg-green-500/20 border border-green-400/30 rounded-2xl backdrop-blur-sm">
             <div className="flex items-center">
               <svg
-                className="w-5 h-5 text-green-500 mr-3"
+                className="w-5 h-5 text-green-400 mr-3"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -240,15 +213,15 @@ export default function UploadPage() {
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p className="text-sm text-green-700">{success}</p>
+              <p className="text-sm text-green-200 font-medium">{success}</p>
             </div>
           </div>
         )}
 
-        <div className="card">
-          <div className="card-body">
+        <div className="backdrop-blur-xl bg-gray-800/80 border border-gray-700/50 rounded-3xl shadow-2xl overflow-hidden">
+          <div className="p-8">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-gradient-to-r from-[#048CE7] to-[#0378c7] rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-gradient-to-r from-[#048CE7] via-[#90caf9] to-[#8f93a9] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="none"
@@ -263,17 +236,17 @@ export default function UploadPage() {
                   />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl font-bold text-white mb-2">
                 Upload Your Resume
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-300">
                 Get AI-powered insights and analysis
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* File Upload Area */}
-              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#048CE7] transition-colors duration-200">
+              <div className="border-2 border-dashed border-gray-600/50 rounded-xl p-8 text-center hover:border-[#048CE7] transition-all duration-200 bg-gray-700/30">
                 <div className="space-y-4">
                   <svg
                     className="mx-auto h-12 w-12 text-gray-400"
@@ -289,27 +262,28 @@ export default function UploadPage() {
                     />
                   </svg>
                   <div>
-                    <label className="cursor-pointer">
-                      <span className="text-[#048CE7] font-semibold hover:text-[#0378c7]">
-                        Choose a file
-                      </span>
-                      <span className="text-gray-600"> or drag and drop</span>
-                    </label>
                     <input
+                      id="file-upload"
                       type="file"
                       className="hidden"
                       accept=".pdf,.doc,.docx"
                       onChange={handleFileChange}
                     />
+                    <label htmlFor="file-upload" className="cursor-pointer">
+                      <span className="text-[#90caf9] font-semibold hover:text-[#048CE7] transition-colors duration-200">
+                        Choose a file
+                      </span>
+                      <span className="text-gray-400"> or drag and drop</span>
+                    </label>
                   </div>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-400">
                     PDF, DOC, DOCX up to 10MB
                   </p>
                   {file && (
-                    <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="mt-4 p-3 bg-green-500/20 border border-green-400/30 rounded-lg">
                       <div className="flex items-center">
                         <svg
-                          className="w-5 h-5 text-green-500 mr-2"
+                          className="w-5 h-5 text-green-400 mr-2"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -321,7 +295,7 @@ export default function UploadPage() {
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
-                        <span className="text-sm font-medium text-green-700">
+                        <span className="text-sm font-medium text-green-200">
                           {file.name}
                         </span>
                       </div>
@@ -331,17 +305,17 @@ export default function UploadPage() {
               </div>
 
               {/* Debug Information */}
-              <div className="bg-gray-50 rounded-lg p-4">
+              <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600/50">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-500">Extraction Fields:</span>
-                    <span className="ml-2 font-medium text-[#048CE7]">
+                    <span className="text-gray-400">Extraction Fields:</span>
+                    <span className="ml-2 font-medium text-[#90caf9]">
                       {extractionFields.length}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Available Tags:</span>
-                    <span className="ml-2 font-medium text-[#048CE7]">
+                    <span className="text-gray-400">Available Tags:</span>
+                    <span className="ml-2 font-medium text-[#90caf9]">
                       {tags.length}
                     </span>
                   </div>
@@ -356,7 +330,7 @@ export default function UploadPage() {
                   extractionFields.length === 0 ||
                   tags.length === 0
                 }
-                className="w-full btn-primary py-3 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-[#048CE7] to-[#90caf9] text-white py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-[#048CE7]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
                 {uploading ? (
                   <div className="flex items-center justify-center">
@@ -391,17 +365,17 @@ export default function UploadPage() {
             {/* Analysis Results */}
             {analysisResult && (
               <div className="mt-8 space-y-6">
-                <div className="border-t border-gray-200 pt-8">
-                  <h3 className="text-xl font-bold text-gray-900 mb-6">
+                <div className="border-t border-gray-700/50 pt-8">
+                  <h3 className="text-xl font-bold text-white mb-6">
                     Analysis Results
                   </h3>
 
                   {/* Summary */}
-                  <div className="card mb-6">
-                    <div className="card-header">
-                      <h4 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <div className="backdrop-blur-xl bg-gray-800/80 border border-gray-700/50 rounded-2xl shadow-lg mb-6">
+                    <div className="p-6 border-b border-gray-700/50">
+                      <h4 className="text-lg font-semibold text-white flex items-center">
                         <svg
-                          className="w-5 h-5 text-[#048CE7] mr-2"
+                          className="w-5 h-5 text-[#90caf9] mr-2"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -416,19 +390,19 @@ export default function UploadPage() {
                         Summary
                       </h4>
                     </div>
-                    <div className="card-body">
-                      <p className="text-gray-700 leading-relaxed">
+                    <div className="p-6">
+                      <p className="text-gray-300 leading-relaxed">
                         {analysisResult.summary}
                       </p>
                     </div>
                   </div>
 
                   {/* Extracted Information */}
-                  <div className="card mb-6">
-                    <div className="card-header">
-                      <h4 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <div className="backdrop-blur-xl bg-gray-800/80 border border-gray-700/50 rounded-2xl shadow-lg mb-6">
+                    <div className="p-6 border-b border-gray-700/50">
+                      <h4 className="text-lg font-semibold text-white flex items-center">
                         <svg
-                          className="w-5 h-5 text-[#048CE7] mr-2"
+                          className="w-5 h-5 text-[#90caf9] mr-2"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -443,16 +417,19 @@ export default function UploadPage() {
                         Extracted Information
                       </h4>
                     </div>
-                    <div className="card-body">
+                    <div className="p-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {Object.entries(
                           analysisResult.extractedInformation
                         ).map(([key, value]) => (
-                          <div key={key} className="bg-gray-50 rounded-lg p-4">
-                            <dt className="text-sm font-medium text-gray-500 mb-1">
+                          <div
+                            key={key}
+                            className="bg-gray-700/50 rounded-xl p-4 border border-gray-600/50"
+                          >
+                            <dt className="text-sm font-medium text-gray-400 mb-1">
                               {key}
                             </dt>
-                            <dd className="text-sm text-gray-900 font-medium">
+                            <dd className="text-sm text-white font-medium">
                               {value || "Not found"}
                             </dd>
                           </div>
@@ -462,11 +439,11 @@ export default function UploadPage() {
                   </div>
 
                   {/* Assigned Tags */}
-                  <div className="card mb-6">
-                    <div className="card-header">
-                      <h4 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <div className="backdrop-blur-xl bg-gray-800/80 border border-gray-700/50 rounded-2xl shadow-lg mb-6">
+                    <div className="p-6 border-b border-gray-700/50">
+                      <h4 className="text-lg font-semibold text-white flex items-center">
                         <svg
-                          className="w-5 h-5 text-[#048CE7] mr-2"
+                          className="w-5 h-5 text-[#90caf9] mr-2"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -481,12 +458,12 @@ export default function UploadPage() {
                         Assigned Tags
                       </h4>
                     </div>
-                    <div className="card-body">
+                    <div className="p-6">
                       <div className="flex flex-wrap gap-2">
                         {analysisResult.assignedTags.map((tag, index) => (
                           <span
                             key={index}
-                            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#048CE7] text-white"
+                            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-[#048CE7] to-[#90caf9] text-white shadow-lg"
                           >
                             {tag}
                           </span>
@@ -496,7 +473,7 @@ export default function UploadPage() {
                   </div>
 
                   {/* Analysis Time */}
-                  <div className="text-center text-sm text-gray-500">
+                  <div className="text-center text-sm text-gray-400">
                     Analyzed at:{" "}
                     {new Date(analysisResult.analyzedAt).toLocaleString()}
                   </div>
@@ -506,6 +483,31 @@ export default function UploadPage() {
           </div>
         </div>
       </main>
+
+      <style jsx>{`
+        @keyframes shake {
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          10%,
+          30%,
+          50%,
+          70%,
+          90% {
+            transform: translateX(-5px);
+          }
+          20%,
+          40%,
+          60%,
+          80% {
+            transform: translateX(5px);
+          }
+        }
+        .animate-shake {
+          animation: shake 0.5s ease-in-out;
+        }
+      `}</style>
     </div>
   );
 }

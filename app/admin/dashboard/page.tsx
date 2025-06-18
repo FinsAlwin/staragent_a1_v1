@@ -210,13 +210,13 @@ export default function DashboardPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "bg-green-100 text-green-800 border-green-200";
+        return "bg-green-500/20 text-green-300 border-green-500/30";
       case "inactive":
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-gray-500/20 text-gray-300 border-gray-500/30";
       case "maintenance":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+        return "bg-yellow-500/20 text-yellow-300 border-yellow-500/30";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-gray-500/20 text-gray-300 border-gray-500/30";
     }
   };
 
@@ -235,19 +235,22 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+            <div className="h-8 bg-gray-700 rounded w-1/4"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="card">
-                  <div className="card-body">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-                    <div className="h-8 bg-gray-200 rounded w-1/2 mb-4"></div>
+                <div
+                  key={i}
+                  className="backdrop-blur-xl bg-gray-800/80 border border-gray-700/50 rounded-3xl shadow-2xl"
+                >
+                  <div className="p-6">
+                    <div className="h-4 bg-gray-700 rounded w-3/4 mb-4"></div>
+                    <div className="h-8 bg-gray-700 rounded w-1/2 mb-4"></div>
                     <div className="space-y-2">
-                      <div className="h-3 bg-gray-200 rounded"></div>
-                      <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                      <div className="h-3 bg-gray-700 rounded"></div>
+                      <div className="h-3 bg-gray-700 rounded w-2/3"></div>
                     </div>
                   </div>
                 </div>
@@ -260,13 +263,13 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-gray-800/80 backdrop-blur-xl shadow-lg border-b border-gray-700/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
-              <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] to-[#0378c7] rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] via-[#90caf9] to-[#8f93a9] rounded-xl flex items-center justify-center mr-4 shadow-lg">
                 <svg
                   className="w-6 h-6 text-white"
                   fill="none"
@@ -282,15 +285,15 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-white">
                   Admin Dashboard
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-300">
                   Manage applications and monitor performance
                 </p>
               </div>
             </div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-gray-400">
               Last updated: {new Date().toLocaleString()}
             </div>
           </div>
@@ -300,10 +303,10 @@ export default function DashboardPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="mb-6 p-4 bg-red-500/20 border border-red-400/30 rounded-2xl backdrop-blur-sm animate-shake">
             <div className="flex items-center">
               <svg
-                className="w-5 h-5 text-red-500 mr-3"
+                className="w-5 h-5 text-red-400 mr-3 animate-pulse"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -315,7 +318,7 @@ export default function DashboardPage() {
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm text-red-200 font-medium">{error}</p>
             </div>
           </div>
         )}
@@ -327,10 +330,10 @@ export default function DashboardPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                className={`py-2 px-1 border-b-2 font-medium text-sm transition-all duration-200 ${
                   activeTab === tab.id
                     ? "border-[#048CE7] text-[#048CE7]"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    : "border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600"
                 }`}
               >
                 {tab.label}
@@ -347,17 +350,17 @@ export default function DashboardPage() {
               {applicationCards.map((app) => (
                 <div
                   key={app.id}
-                  className="card group hover:shadow-lg transition-all duration-300"
+                  className="backdrop-blur-xl bg-gray-800/80 border border-gray-700/50 rounded-3xl shadow-2xl group hover:shadow-[#048CE7]/25 transition-all duration-500 overflow-hidden"
                 >
-                  <div className="card-body">
+                  <div className="p-6">
                     {/* App Header */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] to-[#0378c7] rounded-xl flex items-center justify-center text-white text-lg">
+                        <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] via-[#90caf9] to-[#8f93a9] rounded-xl flex items-center justify-center text-white text-lg shadow-lg">
                           {app.icon}
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">
+                          <h3 className="text-lg font-semibold text-white">
                             {app.title}
                           </h3>
                           <div className="flex items-center space-x-2 mt-1">
@@ -378,7 +381,7 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-sm text-gray-600 mb-4">
+                    <p className="text-sm text-gray-300 mb-4">
                       {app.description}
                     </p>
 
@@ -390,8 +393,8 @@ export default function DashboardPage() {
                             key={index}
                             className="flex justify-between text-sm"
                           >
-                            <span className="text-gray-500">{stat.label}:</span>
-                            <span className="font-medium text-[#048CE7]">
+                            <span className="text-gray-400">{stat.label}:</span>
+                            <span className="font-medium text-[#90caf9]">
                               {stat.value}
                             </span>
                           </div>
@@ -409,12 +412,12 @@ export default function DashboardPage() {
                               action.href !== "#" && router.push(action.href)
                             }
                             disabled={action.href === "#"}
-                            className={`w-full text-sm font-medium px-3 py-2 rounded-lg transition-all duration-200 ${
+                            className={`w-full text-sm font-medium px-3 py-2 rounded-xl transition-all duration-200 ${
                               action.variant === "primary"
-                                ? "btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                                ? "bg-gradient-to-r from-[#048CE7] to-[#90caf9] text-white shadow-lg hover:shadow-[#048CE7]/50 disabled:opacity-50 disabled:cursor-not-allowed"
                                 : action.variant === "secondary"
-                                ? "btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
-                                : "btn-outline disabled:opacity-50 disabled:cursor-not-allowed"
+                                ? "bg-gray-700/50 text-gray-300 border border-gray-600/50 hover:bg-gray-700/70 hover:text-[#90caf9] disabled:opacity-50 disabled:cursor-not-allowed"
+                                : "bg-transparent text-gray-400 border border-gray-600/50 hover:bg-gray-700/30 hover:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
                             }`}
                           >
                             {action.label}
@@ -429,6 +432,31 @@ export default function DashboardPage() {
           </div>
         )}
       </main>
+
+      <style jsx>{`
+        @keyframes shake {
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          10%,
+          30%,
+          50%,
+          70%,
+          90% {
+            transform: translateX(-5px);
+          }
+          20%,
+          40%,
+          60%,
+          80% {
+            transform: translateX(5px);
+          }
+        }
+        .animate-shake {
+          animation: shake 0.5s ease-in-out;
+        }
+      `}</style>
     </div>
   );
 }

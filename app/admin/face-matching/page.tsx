@@ -144,19 +144,20 @@ export default function FaceMatchingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-6">
-            <div className="h-12 bg-gray-200 rounded-lg w-1/3"></div>
+            <div className="h-12 bg-gray-700 rounded-lg w-1/3"></div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {[1, 2].map((i) => (
-                <div key={i} className="card">
-                  <div className="card-body">
-                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-                    <div className="space-y-3">
-                      <div className="h-4 bg-gray-200 rounded"></div>
-                      <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                    </div>
+                <div
+                  key={i}
+                  className="backdrop-blur-xl bg-gray-800/80 border border-gray-700/50 rounded-2xl p-6"
+                >
+                  <div className="h-6 bg-gray-700 rounded w-3/4 mb-4"></div>
+                  <div className="space-y-3">
+                    <div className="h-4 bg-gray-700 rounded"></div>
+                    <div className="h-4 bg-gray-700 rounded w-5/6"></div>
                   </div>
                 </div>
               ))}
@@ -168,13 +169,13 @@ export default function FaceMatchingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-gray-800/80 backdrop-blur-xl shadow-lg border-b border-gray-700/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
-              <div className="w-10 h-10 bg-gradient-to-r from-[#8f93a9] to-[#7a7f95] rounded-xl flex items-center justify-center mr-4">
+              <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] via-[#90caf9] to-[#8f93a9] rounded-xl flex items-center justify-center mr-4 shadow-lg">
                 <svg
                   className="w-6 h-6 text-white"
                   fill="none"
@@ -190,10 +191,10 @@ export default function FaceMatchingPage() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-white">
                   AI Face Matching
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-300">
                   Advanced facial recognition
                 </p>
               </div>
@@ -204,10 +205,10 @@ export default function FaceMatchingPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="mb-6 p-4 bg-red-500/20 border border-red-400/30 rounded-2xl backdrop-blur-sm animate-shake">
             <div className="flex items-center">
               <svg
-                className="w-5 h-5 text-red-500 mr-3"
+                className="w-5 h-5 text-red-400 mr-3 animate-pulse"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -219,18 +220,18 @@ export default function FaceMatchingPage() {
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm text-red-200 font-medium">{error}</p>
             </div>
           </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Upload Section */}
-          <div className="card">
-            <div className="card-header">
-              <h2 className="text-xl font-bold text-gray-900 flex items-center">
+          <div className="backdrop-blur-xl bg-gray-800/80 border border-gray-700/50 rounded-3xl shadow-2xl overflow-hidden">
+            <div className="p-6 border-b border-gray-700/50">
+              <h2 className="text-xl font-bold text-white flex items-center">
                 <svg
-                  className="w-6 h-6 text-[#8f93a9] mr-3"
+                  className="w-6 h-6 text-[#90caf9] mr-3"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -245,37 +246,37 @@ export default function FaceMatchingPage() {
                 Add New Face to Database
               </h2>
             </div>
-            <div className="card-body">
+            <div className="p-6">
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">
                     Image Name
                   </label>
                   <input
                     type="text"
                     value={newImageName}
                     onChange={(e) => setNewImageName(e.target.value)}
-                    className="input-field"
+                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#048CE7] focus:border-transparent transition-all duration-200"
                     placeholder="Enter person's name"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">
                     Select Image
                   </label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleFileSelect}
-                    className="input-field"
+                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#048CE7] file:text-white hover:file:bg-[#90caf9] transition-all duration-200"
                   />
                 </div>
 
                 <button
                   onClick={uploadImage}
                   disabled={uploading || !selectedFile || !newImageName.trim()}
-                  className="w-full btn-secondary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-[#048CE7] to-[#90caf9] text-white py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-[#048CE7]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   {uploading ? (
                     <div className="flex items-center justify-center">
@@ -310,11 +311,11 @@ export default function FaceMatchingPage() {
           </div>
 
           {/* Test Matching Section */}
-          <div className="card">
-            <div className="card-header">
-              <h2 className="text-xl font-bold text-gray-900 flex items-center">
+          <div className="backdrop-blur-xl bg-gray-800/80 border border-gray-700/50 rounded-3xl shadow-2xl overflow-hidden">
+            <div className="p-6 border-b border-gray-700/50">
+              <h2 className="text-xl font-bold text-white flex items-center">
                 <svg
-                  className="w-6 h-6 text-[#8f93a9] mr-3"
+                  className="w-6 h-6 text-[#90caf9] mr-3"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -329,38 +330,38 @@ export default function FaceMatchingPage() {
                 Test Face Matching
               </h2>
             </div>
-            <div className="card-body">
+            <div className="p-6">
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">
                     Select Image File
                   </label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleFileSelect}
-                    className="input-field"
+                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#048CE7] file:text-white hover:file:bg-[#90caf9] transition-all duration-200"
                   />
                 </div>
 
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300" />
+                    <div className="w-full border-t border-gray-600" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">OR</span>
+                    <span className="px-2 bg-gray-800 text-gray-400">OR</span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">
                     Enter Image URL
                   </label>
                   <input
                     type="url"
                     value={imageUrl}
                     onChange={handleUrlChange}
-                    className="input-field"
+                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#048CE7] focus:border-transparent transition-all duration-200"
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
@@ -368,7 +369,7 @@ export default function FaceMatchingPage() {
                 <button
                   onClick={testFaceMatching}
                   disabled={matching || (!selectedFile && !imageUrl.trim())}
-                  className="w-full btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-[#048CE7] to-[#90caf9] text-white py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-[#048CE7]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   {matching ? (
                     <div className="flex items-center justify-center">
@@ -400,10 +401,10 @@ export default function FaceMatchingPage() {
                 </button>
 
                 {matchResult && (
-                  <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                  <div className="mt-6 p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl">
+                    <h3 className="font-semibold text-white mb-4 flex items-center">
                       <svg
-                        className="w-5 h-5 text-[#048CE7] mr-2"
+                        className="w-5 h-5 text-[#90caf9] mr-2"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -418,24 +419,24 @@ export default function FaceMatchingPage() {
                       Results
                     </h3>
                     <div className="space-y-3">
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-300">
                         <span className="font-medium">Description:</span>{" "}
                         {matchResult.uploadedImageDescription}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-300">
                         <span className="font-medium">Processing Time:</span>{" "}
                         {matchResult.processingTime}ms
                       </p>
                       {matchResult.matches.length > 0 ? (
                         <div>
-                          <p className="text-sm font-medium text-gray-700 mb-3">
+                          <p className="text-sm font-medium text-gray-300 mb-3">
                             Matches Found:
                           </p>
                           <div className="space-y-3">
                             {matchResult.matches.map((match) => (
                               <div
                                 key={`match-${match.id}`}
-                                className="bg-white p-3 rounded-lg border"
+                                className="bg-gray-700/50 p-3 rounded-xl border border-gray-600/50"
                               >
                                 <div className="flex items-center space-x-3">
                                   <div className="flex-shrink-0">
@@ -445,7 +446,7 @@ export default function FaceMatchingPage() {
                                         `/api/admin/face-matching/images/${match.id}/image`
                                       }
                                       alt="Matched face"
-                                      className="w-12 h-12 object-cover rounded-lg border"
+                                      className="w-12 h-12 object-cover rounded-lg border border-gray-600/50"
                                       onError={(e) => {
                                         console.error(
                                           `Failed to load matched image: ${match.id}`
@@ -457,15 +458,15 @@ export default function FaceMatchingPage() {
                                   <div className="flex-1">
                                     <div className="flex justify-between items-start">
                                       <div>
-                                        <p className="text-sm font-medium text-gray-900">
+                                        <p className="text-sm font-medium text-white">
                                           {match.name || `Person ${match.id}`}
                                         </p>
-                                        <p className="text-xs text-gray-500">
+                                        <p className="text-xs text-gray-400">
                                           ID: {match.id}
                                         </p>
                                       </div>
                                       <div className="text-right">
-                                        <span className="text-sm font-bold text-[#048CE7]">
+                                        <span className="text-sm font-bold text-[#90caf9]">
                                           {(
                                             match.similarityScore * 100
                                           ).toFixed(1)}
@@ -480,7 +481,7 @@ export default function FaceMatchingPage() {
                           </div>
                         </div>
                       ) : (
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-300">
                           No matches found
                         </p>
                       )}
@@ -493,11 +494,11 @@ export default function FaceMatchingPage() {
         </div>
 
         {/* Stored Images Section */}
-        <div className="mt-8 card">
-          <div className="card-header">
-            <h2 className="text-xl font-bold text-gray-900 flex items-center">
+        <div className="mt-8 backdrop-blur-xl bg-gray-800/80 border border-gray-700/50 rounded-3xl shadow-2xl overflow-hidden">
+          <div className="p-6 border-b border-gray-700/50">
+            <h2 className="text-xl font-bold text-white flex items-center">
               <svg
-                className="w-6 h-6 text-[#8f93a9] mr-3"
+                className="w-6 h-6 text-[#90caf9] mr-3"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -512,23 +513,25 @@ export default function FaceMatchingPage() {
               Stored Images ({storedImages.length})
             </h2>
           </div>
-          <div className="card-body">
+          <div className="p-6">
             {storedImages.length === 0 ? (
               <div className="text-center py-8">
-                <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <p className="mt-2 text-gray-500">No images stored yet.</p>
+                <div className="w-16 h-16 bg-gray-700/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-8 h-8 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+                <p className="text-gray-400">No images stored yet.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -539,59 +542,57 @@ export default function FaceMatchingPage() {
                   return (
                     <div
                       key={imageId}
-                      className="card hover:shadow-lg transition-all duration-300"
+                      className="backdrop-blur-xl bg-gray-700/50 border border-gray-600/50 rounded-2xl p-6 hover:bg-gray-700/70 transition-all duration-300"
                     >
-                      <div className="card-body">
-                        <div className="flex justify-between items-start mb-3">
-                          <h3 className="font-semibold text-gray-900">
-                            {image.name}
-                          </h3>
-                          <button
-                            onClick={() => deleteImage(imageId)}
-                            className="text-red-600 hover:text-red-800 text-sm p-1 hover:bg-red-50 rounded"
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="font-semibold text-white">
+                          {image.name}
+                        </h3>
+                        <button
+                          onClick={() => deleteImage(imageId)}
+                          className="text-red-400 hover:text-red-300 text-sm p-1 hover:bg-red-500/20 rounded-lg transition-all duration-200"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
                           >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-
-                        {image.imageUrl && (
-                          <div className="mb-3">
-                            <img
-                              src={image.imageUrl}
-                              alt={image.name}
-                              className="w-full h-32 object-cover rounded-lg border"
-                              onError={(e) => {
-                                console.error(
-                                  `Failed to load image: ${image.imageUrl}`
-                                );
-                                e.currentTarget.style.display = "none";
-                              }}
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                             />
-                          </div>
-                        )}
+                          </svg>
+                        </button>
+                      </div>
 
-                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                          {image.description.substring(0, 100)}...
-                        </p>
-                        <div className="text-xs text-gray-500 space-y-1">
-                          <p>
-                            Uploaded:{" "}
-                            {new Date(image.uploadedAt).toLocaleDateString()}
-                          </p>
-                          <p className="truncate">URL: {image.imageUrl}</p>
+                      {image.imageUrl && (
+                        <div className="mb-3">
+                          <img
+                            src={image.imageUrl}
+                            alt={image.name}
+                            className="w-full h-32 object-cover rounded-xl border border-gray-600/50"
+                            onError={(e) => {
+                              console.error(
+                                `Failed to load image: ${image.imageUrl}`
+                              );
+                              e.currentTarget.style.display = "none";
+                            }}
+                          />
                         </div>
+                      )}
+
+                      <p className="text-sm text-gray-300 mb-3 line-clamp-2">
+                        {image.description.substring(0, 100)}...
+                      </p>
+                      <div className="text-xs text-gray-400 space-y-1">
+                        <p>
+                          Uploaded:{" "}
+                          {new Date(image.uploadedAt).toLocaleDateString()}
+                        </p>
+                        <p className="truncate">URL: {image.imageUrl}</p>
                       </div>
                     </div>
                   );
@@ -601,6 +602,31 @@ export default function FaceMatchingPage() {
           </div>
         </div>
       </main>
+
+      <style jsx>{`
+        @keyframes shake {
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          10%,
+          30%,
+          50%,
+          70%,
+          90% {
+            transform: translateX(-5px);
+          }
+          20%,
+          40%,
+          60%,
+          80% {
+            transform: translateX(5px);
+          }
+        }
+        .animate-shake {
+          animation: shake 0.5s ease-in-out;
+        }
+      `}</style>
     </div>
   );
 }

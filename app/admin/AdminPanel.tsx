@@ -59,12 +59,7 @@ function TagIcon(props: any) {
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
-      />
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M6 6h.008v.008H6V6z"
+        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
       />
     </svg>
   );
@@ -88,32 +83,9 @@ function ExtractionFieldsIcon(props: any) {
   );
 }
 
-function FaceMatchingIcon(props: any) {
-  return (
-    <svg
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      viewBox="0 0 24 24"
-      {...props}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-      />
-    </svg>
-  );
-}
-
 const navigation: NavItem[] = [
   { name: "Dashboard", href: "/admin/dashboard", icon: HomeIcon },
   { name: "Users", href: "/admin/users", icon: UsersIcon },
-  {
-    name: "Face Matching",
-    href: "/admin/face-matching",
-    icon: FaceMatchingIcon,
-  },
 ];
 
 export default function AdminPanel({
@@ -147,13 +119,13 @@ export default function AdminPanel({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Mobile menu */}
       <div className="lg:hidden">
-        <div className="flex items-center justify-between bg-white shadow-sm border-b border-gray-200 p-4">
+        <div className="flex items-center justify-between bg-gray-800/80 backdrop-blur-xl shadow-lg border-b border-gray-700/50 p-4">
           <button
             type="button"
-            className="text-gray-500 hover:text-[#048CE7] focus:outline-none focus:ring-2 focus:ring-[#048CE7] focus:ring-offset-2 rounded-md p-1"
+            className="text-gray-300 hover:text-[#90caf9] focus:outline-none focus:ring-2 focus:ring-[#048CE7] focus:ring-offset-2 focus:ring-offset-gray-800 rounded-md p-1 transition-colors duration-200"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <svg
@@ -180,7 +152,7 @@ export default function AdminPanel({
             </svg>
           </button>
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-gradient-to-r from-[#048CE7] to-[#0378c7] rounded-lg flex items-center justify-center mr-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-[#048CE7] via-[#90caf9] to-[#8f93a9] rounded-lg flex items-center justify-center mr-3 shadow-lg">
               <svg
                 className="w-5 h-5 text-white"
                 fill="none"
@@ -195,11 +167,11 @@ export default function AdminPanel({
                 />
               </svg>
             </div>
-            <span className="text-gray-900 font-semibold">Admin Panel</span>
+            <span className="text-white font-semibold">Admin Panel</span>
           </div>
           <button
             onClick={handleLogout}
-            className="text-gray-500 hover:text-[#048CE7] transition-colors duration-200"
+            className="text-gray-300 hover:text-[#90caf9] transition-colors duration-200"
           >
             <svg
               className="w-5 h-5"
@@ -217,16 +189,16 @@ export default function AdminPanel({
           </button>
         </div>
         {isMenuOpen && (
-          <nav className="bg-white shadow-lg border-b border-gray-200">
+          <nav className="bg-gray-800/90 backdrop-blur-xl shadow-lg border-b border-gray-700/50">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={`${
                   pathname === item.href
-                    ? "bg-[#048CE7] text-white"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-[#048CE7]"
-                } block px-4 py-3 text-base font-medium transition-colors duration-200`}
+                    ? "bg-gradient-to-r from-[#048CE7] to-[#90caf9] text-white shadow-lg"
+                    : "text-gray-300 hover:bg-gray-700/50 hover:text-[#90caf9]"
+                } block px-4 py-3 text-base font-medium transition-all duration-200`}
               >
                 <div className="flex items-center">
                   <item.icon
@@ -243,10 +215,10 @@ export default function AdminPanel({
 
       {/* Desktop sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex min-h-0 flex-1 flex-col bg-white shadow-lg border-r border-gray-200">
+        <div className="flex min-h-0 flex-1 flex-col bg-gray-800/80 backdrop-blur-xl shadow-2xl border-r border-gray-700/50">
           <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
             <div className="flex flex-shrink-0 items-center px-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] to-[#0378c7] rounded-xl flex items-center justify-center mr-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] via-[#90caf9] to-[#8f93a9] rounded-xl flex items-center justify-center mr-3 shadow-lg">
                 <svg
                   className="w-6 h-6 text-white"
                   fill="none"
@@ -261,9 +233,7 @@ export default function AdminPanel({
                   />
                 </svg>
               </div>
-              <span className="text-gray-900 font-bold text-xl">
-                Admin Panel
-              </span>
+              <span className="text-white font-bold text-xl">Admin Panel</span>
             </div>
             <nav className="mt-8 flex-1 space-y-1 px-3">
               {navigation.map((item) => (
@@ -272,8 +242,8 @@ export default function AdminPanel({
                   href={item.href}
                   className={`${
                     pathname === item.href
-                      ? "bg-[#048CE7] text-white shadow-sm"
-                      : "text-gray-700 hover:bg-gray-50 hover:text-[#048CE7]"
+                      ? "bg-gradient-to-r from-[#048CE7] to-[#90caf9] text-white shadow-lg"
+                      : "text-gray-300 hover:bg-gray-700/50 hover:text-[#90caf9]"
                   } group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200`}
                 >
                   <item.icon
@@ -285,15 +255,15 @@ export default function AdminPanel({
               ))}
             </nav>
           </div>
-          <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
+          <div className="flex flex-shrink-0 border-t border-gray-700/50 p-4">
             <button
               onClick={handleLogout}
               className="group block w-full flex-shrink-0"
             >
-              <div className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+              <div className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700/50 transition-all duration-200">
+                <div className="w-8 h-8 bg-gray-700/50 rounded-lg flex items-center justify-center">
                   <svg
-                    className="h-5 w-5 text-gray-500"
+                    className="h-5 w-5 text-gray-300 group-hover:text-[#90caf9] transition-colors duration-200"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -307,7 +277,7 @@ export default function AdminPanel({
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-700 group-hover:text-[#048CE7] transition-colors duration-200">
+                  <p className="text-sm font-medium text-gray-300 group-hover:text-[#90caf9] transition-colors duration-200">
                     Sign out
                   </p>
                 </div>
