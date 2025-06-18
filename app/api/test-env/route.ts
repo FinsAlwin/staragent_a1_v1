@@ -5,12 +5,18 @@ export async function GET(request: NextRequest) {
     // Test all environment variables
     const envVars = {
       NODE_ENV: process.env.NODE_ENV,
-      JWT_SECRET: process.env.JWT_SECRET ? "Defined" : "Undefined",
-      MONGODB_URI: process.env.MONGODB_URI ? "Defined" : "Undefined",
+      NEXT_PUBLIC_JWT_SECRET: process.env.NEXT_PUBLIC_JWT_SECRET
+        ? "Defined"
+        : "Undefined",
+      NEXT_PUBLIC_MONGODB_URI: process.env.NEXT_PUBLIC_MONGODB_URI
+        ? "Defined"
+        : "Undefined",
       NEXT_PUBLIC_GEMINI_API_KEY: process.env.NEXT_PUBLIC_GEMINI_API_KEY
         ? "Defined"
         : "Undefined",
-      CUSTOM_KEY: process.env.CUSTOM_KEY ? "Defined" : "Undefined",
+      NEXT_PUBLIC_CUSTOM_KEY: process.env.NEXT_PUBLIC_CUSTOM_KEY
+        ? "Defined"
+        : "Undefined",
     };
 
     // Test if we can access process.env directly

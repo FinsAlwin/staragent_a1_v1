@@ -12,12 +12,12 @@ export async function POST(request: NextRequest) {
     console.log("Timestamp:", new Date().toISOString());
     console.log("NODE_ENV:", process.env.NODE_ENV);
     console.log(
-      "JWT_SECRET:",
-      process.env.JWT_SECRET ? "Defined" : "Undefined"
+      "NEXT_PUBLIC_JWT_SECRET:",
+      process.env.NEXT_PUBLIC_JWT_SECRET ? "Defined" : "Undefined"
     );
     console.log(
-      "MONGODB_URI:",
-      process.env.MONGODB_URI ? "Defined" : "Undefined"
+      "NEXT_PUBLIC_MONGODB_URI:",
+      process.env.NEXT_PUBLIC_MONGODB_URI ? "Defined" : "Undefined"
     );
     console.log(
       "NEXT_PUBLIC_GEMINI_API_KEY:",
@@ -27,12 +27,12 @@ export async function POST(request: NextRequest) {
     // Try different ways to access environment variables
     const envVars = {
       direct: {
-        JWT_SECRET: process.env.JWT_SECRET,
-        MONGODB_URI: process.env.MONGODB_URI,
+        JWT_SECRET: process.env.NEXT_PUBLIC_JWT_SECRET,
+        MONGODB_URI: process.env.NEXT_PUBLIC_MONGODB_URI,
       },
       viaObject: {
-        JWT_SECRET: (process.env as any).JWT_SECRET,
-        MONGODB_URI: (process.env as any).MONGODB_URI,
+        JWT_SECRET: (process.env as any).NEXT_PUBLIC_JWT_SECRET,
+        MONGODB_URI: (process.env as any).NEXT_PUBLIC_MONGODB_URI,
       },
       allKeys: Object.keys(process.env).filter(
         (key) =>
@@ -46,11 +46,11 @@ export async function POST(request: NextRequest) {
     );
     console.log("=== END DEBUG ===");
 
-    const JWT_SECRET = process.env.JWT_SECRET;
+    const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
     if (!JWT_SECRET) {
       return NextResponse.json(
         {
-          error: "JWT_SECRET environment variable is not defined",
+          error: "NEXT_PUBLIC_JWT_SECRET environment variable is not defined",
           debug: {
             route: "/api/auth/login",
             timestamp: new Date().toISOString(),

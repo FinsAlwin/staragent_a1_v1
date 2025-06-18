@@ -51,7 +51,9 @@ export async function GET(request: NextRequest) {
 
     // Try to verify the JWT
     try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+      const secret = new TextEncoder().encode(
+        process.env.NEXT_PUBLIC_JWT_SECRET
+      );
       const { payload } = await jwtVerify(tokenToUse!, secret);
 
       return NextResponse.json({
@@ -84,7 +86,7 @@ export async function GET(request: NextRequest) {
           error: "JWT verification failed",
           debug: {
             jwtError: jwtError.message,
-            secretLength: process.env.JWT_SECRET?.length,
+            secretLength: process.env.NEXT_PUBLIC_JWT_SECRET?.length,
             tokenLength: tokenToUse?.length,
             hasUserInDB: !!user,
           },

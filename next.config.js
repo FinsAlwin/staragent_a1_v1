@@ -1,18 +1,21 @@
-const path = require('path');
+const path = require("path");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    esmExternals: 'loose',
-    serverComponentsExternalPackages: ['mongoose'],
+    esmExternals: "loose",
+    serverComponentsExternalPackages: ["mongoose"],
   },
   images: {
-    domains: ['localhost'],
+    domains: ["localhost"],
     unoptimized: true, // Required for Amplify
   },
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
+    NEXT_PUBLIC_JWT_SECRET: process.env.NEXT_PUBLIC_JWT_SECRET,
+    NEXT_PUBLIC_MONGODB_URI: process.env.NEXT_PUBLIC_MONGODB_URI,
+    NEXT_PUBLIC_GEMINI_API_KEY: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
   },
   // For AWS Amplify deployment
   poweredByHeader: false,
@@ -21,11 +24,17 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/api/:path*',
+        source: "/api/:path*",
         headers: [
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET, POST, PUT, DELETE, OPTIONS' },
-          { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST, PUT, DELETE, OPTIONS",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
         ],
       },
     ];
@@ -45,14 +54,15 @@ const nextConfig = {
     // Add path alias resolution
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
-      '@': path.resolve(__dirname),
+      "@": path.resolve(__dirname),
     };
 
     // PDF.js worker configuration
     if (!isServer) {
       config.resolve.alias = {
         ...config.resolve.alias,
-        'pdfjs-dist/build/pdf.worker.min.js': 'pdfjs-dist/build/pdf.worker.min.js',
+        "pdfjs-dist/build/pdf.worker.min.js":
+          "pdfjs-dist/build/pdf.worker.min.js",
         canvas: false,
       };
     }
@@ -60,7 +70,7 @@ const nextConfig = {
     // Handle canvas in Node.js environment
     if (isServer) {
       config.externals.push({
-        canvas: 'commonjs canvas',
+        canvas: "commonjs canvas",
       });
     }
 

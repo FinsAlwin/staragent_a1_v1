@@ -6,7 +6,7 @@ console.log("Loading .env.local from:", envPath);
 
 const result = config({ path: envPath });
 console.log("Dotenv config result:", result);
-console.log("MONGODB_URI:", process.env.MONGODB_URI);
+console.log("NEXT_PUBLIC_MONGODB_URI:", process.env.NEXT_PUBLIC_MONGODB_URI);
 
 import dbConnect from "../lib/db";
 import User from "../models/User";

@@ -4,9 +4,16 @@ export async function GET(request: NextRequest) {
   try {
     const results = {
       step1: {
-        name: "Environment Variables Check",
-        status: "testing...",
-        details: {},
+        name: "Environment Variables",
+        status: "completed",
+        error: null,
+        data: {
+          NODE_ENV: process.env.NODE_ENV,
+          MONGODB_URI_EXISTS: !!process.env.NEXT_PUBLIC_MONGODB_URI,
+          JWT_SECRET_EXISTS: !!process.env.NEXT_PUBLIC_JWT_SECRET,
+          JWT_SECRET_LENGTH: process.env.NEXT_PUBLIC_JWT_SECRET?.length,
+          GEMINI_API_KEY_EXISTS: !!process.env.NEXT_PUBLIC_GEMINI_API_KEY,
+        },
       },
       step2: {
         name: "Database Connection Test",
@@ -20,28 +27,18 @@ export async function GET(request: NextRequest) {
       },
     };
 
-    // Step 1: Check environment variables
-    try {
-      const mongoUri = process.env.MONGODB_URI;
-      const cleanMongoUri = mongoUri?.replace(/^["']|["']$/g, "");
+    // Step 1: Environment variables
+    const mongoUri = process.env.NEXT_PUBLIC_MONGODB_URI;
+    const jwtSecret = process.env.NEXT_PUBLIC_JWT_SECRET;
+    const geminiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
-      results.step1.details = {
-        NODE_ENV: process.env.NODE_ENV,
-        JWT_SECRET_EXISTS: !!process.env.JWT_SECRET,
-        JWT_SECRET_LENGTH: process.env.JWT_SECRET?.length,
-        MONGODB_URI_EXISTS: !!process.env.MONGODB_URI,
-        MONGODB_URI_START: mongoUri?.substring(0, 20) + "...",
-        MONGODB_URI_HAS_QUOTES:
-          mongoUri?.startsWith('"') || mongoUri?.startsWith("'"),
-        MONGODB_URI_CLEAN_START: cleanMongoUri?.substring(0, 20) + "...",
-        GEMINI_API_KEY_EXISTS: !!process.env.NEXT_PUBLIC_GEMINI_API_KEY,
-        GEMINI_API_KEY_LENGTH: process.env.NEXT_PUBLIC_GEMINI_API_KEY?.length,
-      };
-      results.step1.status = "passed";
-    } catch (error: any) {
-      results.step1.status = "failed";
-      results.step1.details = { error: error.message };
-    }
+    results.step1.data = {
+      NODE_ENV: process.env.NODE_ENV,
+      MONGODB_URI_EXISTS: !!process.env.NEXT_PUBLIC_MONGODB_URI,
+      JWT_SECRET_EXISTS: !!process.env.NEXT_PUBLIC_JWT_SECRET,
+      JWT_SECRET_LENGTH: process.env.NEXT_PUBLIC_JWT_SECRET?.length,
+      GEMINI_API_KEY_EXISTS: !!process.env.NEXT_PUBLIC_GEMINI_API_KEY,
+    };
 
     // Step 2: Test database connection
     try {

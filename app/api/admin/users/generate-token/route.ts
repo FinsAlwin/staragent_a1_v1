@@ -3,7 +3,7 @@ import dbConnect from "@/lib/db";
 import User from "@/models/User";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET as string;
 if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is not defined");
 }

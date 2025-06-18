@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   try {
     // Step 1: Check environment variables
-    const mongoUri = process.env.MONGODB_URI;
+    const mongoUri = process.env.NEXT_PUBLIC_MONGODB_URI;
     const hasMongoUri = !!mongoUri;
 
     // Step 2: Try to import mongoose

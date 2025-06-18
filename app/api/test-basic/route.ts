@@ -9,8 +9,9 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
       env: {
         NODE_ENV: process.env.NODE_ENV,
-        HAS_MONGODB_URI: !!process.env.MONGODB_URI,
-        HAS_JWT_SECRET: !!process.env.JWT_SECRET,
+        HAS_MONGODB_URI: !!process.env.NEXT_PUBLIC_MONGODB_URI,
+        HAS_JWT_SECRET: !!process.env.NEXT_PUBLIC_JWT_SECRET,
+        HAS_GEMINI_API_KEY: !!process.env.NEXT_PUBLIC_GEMINI_API_KEY,
       },
     });
   } catch (error: any) {

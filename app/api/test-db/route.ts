@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
-    const mongoUri = process.env.MONGODB_URI;
+    const mongoUri = process.env.NEXT_PUBLIC_MONGODB_URI;
 
     if (!mongoUri) {
       return NextResponse.json(

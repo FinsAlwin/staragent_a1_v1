@@ -9,9 +9,11 @@ export async function GET(request: NextRequest) {
       nodeEnv: process.env.NODE_ENV,
       basicEnvVars: {
         NODE_ENV: process.env.NODE_ENV,
-        JWT_SECRET_EXISTS: !!process.env.JWT_SECRET,
-        MONGODB_URI_EXISTS: !!process.env.MONGODB_URI,
+        JWT_SECRET_EXISTS: !!process.env.NEXT_PUBLIC_JWT_SECRET,
+        MONGODB_URI_EXISTS: !!process.env.NEXT_PUBLIC_MONGODB_URI,
       },
+      HAS_MONGODB_URI: !!process.env.NEXT_PUBLIC_MONGODB_URI,
+      GEMINI_API_KEY_EXISTS: !!process.env.NEXT_PUBLIC_GEMINI_API_KEY,
     });
   } catch (error: any) {
     return NextResponse.json(

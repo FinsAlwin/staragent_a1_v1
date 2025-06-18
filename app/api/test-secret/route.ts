@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   return NextResponse.json({
-    secretExists: !!process.env.JWT_SECRET,
-    secretLength: process.env.JWT_SECRET?.length,
-    secretStart: process.env.JWT_SECRET?.substring(0, 10) + "...",
-    nodeEnv: process.env.NODE_ENV,
+    message: "JWT Secret test",
+    timestamp: new Date().toISOString(),
+    secretExists: !!process.env.NEXT_PUBLIC_JWT_SECRET,
+    secretLength: process.env.NEXT_PUBLIC_JWT_SECRET?.length,
+    secretStart: process.env.NEXT_PUBLIC_JWT_SECRET?.substring(0, 10) + "...",
   });
 }

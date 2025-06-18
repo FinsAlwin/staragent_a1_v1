@@ -1,9 +1,14 @@
 import { NextRequest } from "next/server";
-import { jwtVerify } from "jose";
+import { jwtVerify, SignJWT } from "jose";
 import User from "@/models/User";
 import dbConnect from "@/lib/db";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
+// Get JWT secret from environment variables
+const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET as string;
+
+if (!JWT_SECRET) {
+  throw new Error("NEXT_PUBLIC_JWT_SECRET environment variable is not defined");
+}
 
 export async function verifyAuth(request: NextRequest) {
   try {
@@ -12,7 +17,7 @@ export async function verifyAuth(request: NextRequest) {
       return null;
     }
 
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    const secret = new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
 
     // Verify that the token exists in the database
@@ -43,7 +48,7 @@ export async function verifyBearerToken(request: NextRequest) {
     }
 
     // Verify the token
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    const secret = new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
 
     // Verify that the token exists in the database
@@ -64,5 +69,31 @@ export async function verifyBearerToken(request: NextRequest) {
     };
   } catch (error) {
     return null;
+  }
+}
+
+// Function to verify JWT token
+export async function verifyToken(token: string) {
+  try {
+    const secret = new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET);
+    const { payload } = await jwtVerify(token, secret);
+    return payload;
+  } catch (error) {
+    return null;
+  }
+}
+
+// Function to generate JWT token
+export async function generateToken(payload: any) {
+  try {
+    const secret = new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET);
+    const token = await new SignJWT(payload)
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("30d")
+      .sign(secret);
+    return token;
+  } catch (error) {
+    throw new Error("Failed to generate token");
   }
 }

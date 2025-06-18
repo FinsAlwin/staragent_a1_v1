@@ -37,7 +37,7 @@ export async function POST(
         role: user.role,
         exp: Math.floor(expiryDate.getTime() / 1000),
       },
-      process.env.JWT_SECRET!
+      process.env.NEXT_PUBLIC_JWT_SECRET!
     );
 
     // Update user with new token
