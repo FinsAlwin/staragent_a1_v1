@@ -6,9 +6,101 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  
+  /* Custom color palette */
+  --primary: #048CE7;
+  --secondary: #8f93a9;
+  --accent: #90caf9;
+  --light: #ffffff;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-end-rgb));
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Smooth transitions */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Custom button styles */
+.btn-primary {
+  @apply bg-[#048CE7] hover:bg-[#0378c7] text-white font-medium py-2 px-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#048CE7] focus:ring-offset-2;
+}
+
+.btn-secondary {
+  @apply bg-[#8f93a9] hover:bg-[#7a7f95] text-white font-medium py-2 px-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#8f93a9] focus:ring-offset-2;
+}
+
+.btn-accent {
+  @apply bg-[#90caf9] hover:bg-[#7bb8f8] text-white font-medium py-2 px-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#90caf9] focus:ring-offset-2;
+}
+
+.btn-outline {
+  @apply border-2 border-[#048CE7] text-[#048CE7] hover:bg-[#048CE7] hover:text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#048CE7] focus:ring-offset-2;
+}
+
+/* Card styles */
+.card {
+  @apply bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200;
+}
+
+.card-header {
+  @apply px-6 py-4 border-b border-gray-100;
+}
+
+.card-body {
+  @apply px-6 py-4;
+}
+
+/* Input styles */
+.input-field {
+  @apply w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#048CE7] focus:border-[#048CE7] transition-all duration-200 placeholder-gray-400;
+}
+
+/* Gradient backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, #048CE7 0%, #0378c7 100%);
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, #8f93a9 0%, #7a7f95 100%);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, #90caf9 0%, #7bb8f8 100%);
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 } 

@@ -147,13 +147,13 @@ export default function AdminPanel({
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Mobile menu */}
       <div className="lg:hidden">
-        <div className="flex items-center justify-between bg-gray-800 p-4">
+        <div className="flex items-center justify-between bg-white shadow-sm border-b border-gray-200 p-4">
           <button
             type="button"
-            className="text-gray-400 hover:text-white focus:outline-none"
+            className="text-gray-500 hover:text-[#048CE7] focus:outline-none focus:ring-2 focus:ring-[#048CE7] focus:ring-offset-2 rounded-md p-1"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <svg
@@ -179,29 +179,58 @@ export default function AdminPanel({
               )}
             </svg>
           </button>
-          <span className="text-white font-semibold">Admin Panel</span>
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-gradient-to-r from-[#048CE7] to-[#0378c7] rounded-lg flex items-center justify-center mr-3">
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
+              </svg>
+            </div>
+            <span className="text-gray-900 font-semibold">Admin Panel</span>
+          </div>
           <button
             onClick={handleLogout}
-            className="text-gray-400 hover:text-white"
+            className="text-gray-500 hover:text-[#048CE7] transition-colors duration-200"
           >
-            Sign out
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              />
+            </svg>
           </button>
         </div>
         {isMenuOpen && (
-          <nav className="bg-gray-800">
+          <nav className="bg-white shadow-lg border-b border-gray-200">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={`${
                   pathname === item.href
-                    ? "bg-gray-900 text-white"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                } block px-3 py-2 text-base font-medium`}
+                    ? "bg-[#048CE7] text-white"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-[#048CE7]"
+                } block px-4 py-3 text-base font-medium transition-colors duration-200`}
               >
                 <div className="flex items-center">
                   <item.icon
-                    className="mr-4 h-6 w-6 flex-shrink-0"
+                    className="mr-3 h-5 w-5 flex-shrink-0"
                     aria-hidden="true"
                   />
                   {item.name}
@@ -214,26 +243,41 @@ export default function AdminPanel({
 
       {/* Desktop sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex min-h-0 flex-1 flex-col bg-gray-800">
+        <div className="flex min-h-0 flex-1 flex-col bg-white shadow-lg border-r border-gray-200">
           <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
-            <div className="flex flex-shrink-0 items-center px-4">
-              <span className="text-white font-semibold text-xl">
+            <div className="flex flex-shrink-0 items-center px-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] to-[#0378c7] rounded-xl flex items-center justify-center mr-3">
+                <svg
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
+              </div>
+              <span className="text-gray-900 font-bold text-xl">
                 Admin Panel
               </span>
             </div>
-            <nav className="mt-5 flex-1 space-y-1 px-2">
+            <nav className="mt-8 flex-1 space-y-1 px-3">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
                   className={`${
                     pathname === item.href
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                  } group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
+                      ? "bg-[#048CE7] text-white shadow-sm"
+                      : "text-gray-700 hover:bg-gray-50 hover:text-[#048CE7]"
+                  } group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200`}
                 >
                   <item.icon
-                    className="mr-3 h-6 w-6 flex-shrink-0"
+                    className="mr-3 h-5 w-5 flex-shrink-0"
                     aria-hidden="true"
                   />
                   {item.name}
@@ -241,15 +285,15 @@ export default function AdminPanel({
               ))}
             </nav>
           </div>
-          <div className="flex flex-shrink-0 bg-gray-700 p-4">
+          <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
             <button
               onClick={handleLogout}
               className="group block w-full flex-shrink-0"
             >
-              <div className="flex items-center">
-                <div>
+              <div className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                   <svg
-                    className="inline-block h-9 w-9 rounded-full text-gray-300"
+                    className="h-5 w-5 text-gray-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -258,12 +302,14 @@ export default function AdminPanel({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth="2"
-                      d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                     />
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-white">Sign out</p>
+                  <p className="text-sm font-medium text-gray-700 group-hover:text-[#048CE7] transition-colors duration-200">
+                    Sign out
+                  </p>
                 </div>
               </div>
             </button>

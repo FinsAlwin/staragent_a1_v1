@@ -99,11 +99,6 @@ export default function DashboardPage() {
           href: "/face-matching",
           variant: "secondary",
         },
-        // {
-        //   label: "API Docs",
-        //   href: "/api/face-matching/match",
-        //   variant: "outline",
-        // },
       ],
     },
     {
@@ -246,15 +241,14 @@ export default function DashboardPage() {
             <div className="h-8 bg-gray-200 rounded w-1/4"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-xl shadow-sm p-6 space-y-4"
-                >
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-                  <div className="space-y-2">
-                    <div className="h-3 bg-gray-200 rounded"></div>
-                    <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                <div key={i} className="card">
+                  <div className="card-body">
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+                    <div className="h-8 bg-gray-200 rounded w-1/2 mb-4"></div>
+                    <div className="space-y-2">
+                      <div className="h-3 bg-gray-200 rounded"></div>
+                      <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -267,46 +261,61 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Admin Dashboard
-              </h1>
-              <p className="mt-2 text-gray-600">
-                Manage your applications and monitor system performance
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-500">
-                Last updated: {new Date().toLocaleString()}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Error Alert */}
-        {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <div className="flex items-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] to-[#0378c7] rounded-xl flex items-center justify-center mr-4">
                 <svg
-                  className="h-5 w-5 text-red-400"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
                   <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                   />
                 </svg>
               </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Admin Dashboard
+                </h1>
+                <p className="text-sm text-gray-600">
+                  Manage applications and monitor performance
+                </p>
               </div>
+            </div>
+            <div className="text-sm text-gray-500">
+              Last updated: {new Date().toLocaleString()}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center">
+              <svg
+                className="w-5 h-5 text-red-500 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p className="text-sm text-red-700">{error}</p>
             </div>
           </div>
         )}
@@ -318,9 +327,9 @@ export default function DashboardPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
                   activeTab === tab.id
-                    ? "border-blue-500 text-blue-600"
+                    ? "border-[#048CE7] text-[#048CE7]"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`}
               >
@@ -338,13 +347,15 @@ export default function DashboardPage() {
               {applicationCards.map((app) => (
                 <div
                   key={app.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200"
+                  className="card group hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="p-6">
+                  <div className="card-body">
                     {/* App Header */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center space-x-3">
-                        <span className="text-2xl">{app.icon}</span>
+                        <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] to-[#0378c7] rounded-xl flex items-center justify-center text-white text-lg">
+                          {app.icon}
+                        </div>
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">
                             {app.title}
@@ -380,7 +391,7 @@ export default function DashboardPage() {
                             className="flex justify-between text-sm"
                           >
                             <span className="text-gray-500">{stat.label}:</span>
-                            <span className="font-medium text-gray-900">
+                            <span className="font-medium text-[#048CE7]">
                               {stat.value}
                             </span>
                           </div>
@@ -398,12 +409,12 @@ export default function DashboardPage() {
                               action.href !== "#" && router.push(action.href)
                             }
                             disabled={action.href === "#"}
-                            className={`w-full text-sm font-medium px-3 py-2 rounded-lg transition-colors duration-200 ${
+                            className={`w-full text-sm font-medium px-3 py-2 rounded-lg transition-all duration-200 ${
                               action.variant === "primary"
-                                ? "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300"
+                                ? "btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                                 : action.variant === "secondary"
-                                ? "bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:bg-gray-100"
-                                : "border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:border-gray-200 disabled:text-gray-400"
+                                ? "btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+                                : "btn-outline disabled:opacity-50 disabled:cursor-not-allowed"
                             }`}
                           >
                             {action.label}
@@ -417,7 +428,7 @@ export default function DashboardPage() {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
