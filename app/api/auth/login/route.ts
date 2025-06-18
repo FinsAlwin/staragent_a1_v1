@@ -7,6 +7,11 @@ import jwt from "jsonwebtoken";
 export async function POST(request: NextRequest) {
   try {
     // Check JWT_SECRET inside the function
+    console.log(
+      "JWT_SECRET:",
+      process.env.JWT_SECRET ? "Defined" : "Undefined"
+    );
+
     const JWT_SECRET = process.env.JWT_SECRET;
     if (!JWT_SECRET) {
       return NextResponse.json(
