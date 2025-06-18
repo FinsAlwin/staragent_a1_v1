@@ -8,6 +8,7 @@ export default function FaceMatchingPage() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState("");
   const [newImageName, setNewImageName] = useState("");
   const [matchResult, setMatchResult] = useState<FaceMatchResult | null>(null);
   const [matching, setMatching] = useState(false);
@@ -34,11 +35,19 @@ export default function FaceMatchingPage() {
     const file = event.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
       setSelectedFile(file);
+      setImageUrl(""); // Clear URL when file is selected
       setError("");
     } else {
       setError("Please select a valid image file");
       setSelectedFile(null);
     }
+  };
+
+  const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const url = event.target.value;
+    setImageUrl(url);
+    setSelectedFile(null); // Clear file when URL is entered
+    setError("");
   };
 
   const uploadImage = async () => {
@@ -78,8 +87,8 @@ export default function FaceMatchingPage() {
   };
 
   const testFaceMatching = async () => {
-    if (!selectedFile) {
-      setError("Please select an image to test");
+    if (!selectedFile && !imageUrl.trim()) {
+      setError("Please select an image file or enter an image URL to test");
       return;
     }
 
@@ -88,8 +97,15 @@ export default function FaceMatchingPage() {
 
     try {
       const formData = new FormData();
-      formData.append("image", selectedFile);
-      formData.append("mimeType", selectedFile.type);
+
+      if (selectedFile) {
+        // Use file upload
+        formData.append("image", selectedFile);
+        formData.append("mimeType", selectedFile.type);
+      } else if (imageUrl.trim()) {
+        // Use image URL
+        formData.append("imageUrl", imageUrl.trim());
+      }
 
       const response = await fetch("/api/face-matching/match", {
         method: "POST",
@@ -218,7 +234,7 @@ export default function FaceMatchingPage() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Image to Test
+                Select Image File
               </label>
               <input
                 type="file"
@@ -228,9 +244,31 @@ export default function FaceMatchingPage() {
               />
             </div>
 
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">OR</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enter Image URL
+              </label>
+              <input
+                type="url"
+                value={imageUrl}
+                onChange={handleUrlChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+
             <button
               onClick={testFaceMatching}
-              disabled={matching || !selectedFile}
+              disabled={matching || (!selectedFile && !imageUrl.trim())}
               className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {matching ? "Matching..." : "Test Face Matching"}
