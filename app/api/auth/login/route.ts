@@ -12,6 +12,11 @@ export async function POST(request: NextRequest) {
       process.env.JWT_SECRET ? "Defined" : "Undefined"
     );
 
+    console.log(
+      "MONGODB_URI:",
+      process.env.MONGODB_URI ? "Defined" : "Undefined"
+    );
+
     const JWT_SECRET = process.env.JWT_SECRET;
     if (!JWT_SECRET) {
       return NextResponse.json(
