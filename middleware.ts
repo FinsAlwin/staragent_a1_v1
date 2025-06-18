@@ -28,6 +28,7 @@ const publicRoutes = [
   "/api/test-import", // Import test route
   "/api/test-login-step", // Login step test route
   "/api/test-env", // Environment variables test route
+  "/api/test-login-env", // Login environment test route
 ];
 
 // Function to verify JWT token
