@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "../../../../../../lib/db";
 import StoredImage from "../../../../../../models/StoredImage";
-import { deleteImageFromLocal } from "../../../../../../lib/amplifyStorage";
+import { deleteImageFromS3 } from "../../../../../../lib/s3Storage";
 
 // GET - Retrieve a specific stored image
 export async function GET(
@@ -80,28 +80,20 @@ export async function DELETE(
       return NextResponse.json({ error: "Image not found" }, { status: 404 });
     }
 
-    // Delete the physical file if it's a local file
-    if (image.imageUrl && image.imageUrl.startsWith("/uploads/")) {
+    // Delete from S3 if s3Key exists
+    if (image.s3Key) {
       try {
-        const fileName = image.imageUrl.split("/").pop();
-        if (fileName) {
-          await deleteImageFromLocal(fileName);
-          console.log(`Local file deleted: ${fileName}`);
-        }
-      } catch (fileError) {
-        console.error("Error deleting local file:", fileError);
-        // Continue with database deletion even if file deletion fails
+        await deleteImageFromS3(image.s3Key);
+      } catch (s3Error) {
+        console.error("Error deleting S3 file:", s3Error);
+        // Continue with database deletion even if S3 deletion fails
       }
     }
 
     // Delete from database
     await StoredImage.findByIdAndDelete(params.id);
 
-    console.log(`Image deleted successfully: ${image.name}`);
-
-    return NextResponse.json({
-      message: "Image deleted successfully",
-    });
+    return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Error deleting image:", error);
     return NextResponse.json(

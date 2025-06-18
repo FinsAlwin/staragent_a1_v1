@@ -128,29 +128,21 @@ export default function AdminPanel({
   useEffect(() => {
     // Authentication is handled by middleware
     // No need to check token on client side since it's httpOnly
-    console.log(
-      "AdminPanel - Component mounted, authentication handled by middleware"
-    );
   }, []);
 
-  const handleSignOut = async () => {
+  const handleLogout = async () => {
     try {
-      // Call logout API to clear server-side cookies
-      await fetch("/api/auth/logout", {
+      const response = await fetch("/api/auth/logout", {
         method: "POST",
-        credentials: "include",
       });
+
+      if (response.ok) {
+        router.push("/login");
+      } else {
+        throw new Error("Logout failed");
+      }
     } catch (error) {
       console.error("Logout API error:", error);
-    } finally {
-      // Clear the cookie on client side
-      Cookies.remove("token");
-      // Also clear localStorage if it exists for backward compatibility
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-      }
-      // router.push("/login");
     }
   };
 
@@ -189,7 +181,7 @@ export default function AdminPanel({
           </button>
           <span className="text-white font-semibold">Admin Panel</span>
           <button
-            onClick={handleSignOut}
+            onClick={handleLogout}
             className="text-gray-400 hover:text-white"
           >
             Sign out
@@ -251,7 +243,7 @@ export default function AdminPanel({
           </div>
           <div className="flex flex-shrink-0 bg-gray-700 p-4">
             <button
-              onClick={handleSignOut}
+              onClick={handleLogout}
               className="group block w-full flex-shrink-0"
             >
               <div className="flex items-center">

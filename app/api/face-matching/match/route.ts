@@ -43,23 +43,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert file to base64
-    const arrayBuffer = await imageFile.arrayBuffer();
-    const base64Image = Buffer.from(arrayBuffer).toString("base64");
-
-    // Validate base64 data
-    if (!base64Image || base64Image.length === 0) {
-      return NextResponse.json(
-        { error: "Invalid image data. Please upload a valid image file." },
-        { status: 400 }
-      );
-    }
-
-    console.log(
-      `Processing image: ${imageFile.name}, size: ${imageFile.size} bytes, base64 length: ${base64Image.length}`
-    );
-
     const startTime = Date.now();
+
+    // Convert image to base64
+    const arrayBuffer = await imageFile.arrayBuffer();
+    const imageBuffer = Buffer.from(arrayBuffer);
+    const base64Image = imageBuffer.toString("base64");
 
     // Get AI description of the uploaded image
     const uploadedImageDescription = await getImageDescription(
@@ -82,8 +71,7 @@ export async function POST(request: NextRequest) {
     // Find similar faces
     const matches = await findSimilarFaces(uploadedImageDescription);
 
-    const endTime = Date.now();
-    const processingTime = endTime - startTime;
+    const processingTime = Date.now() - startTime;
 
     return NextResponse.json({
       uploadedImageDescription,

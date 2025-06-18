@@ -1,8 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+
+interface ExtractionField {
+  id: string;
+  key: string;
+  label: string;
+  description?: string;
+}
+
+interface Tag {
+  id: string;
+  name: string;
+}
+
+interface AnalysisResult {
+  summary: string;
+  extractedInformation: Record<string, string>;
+  assignedTags: string[];
+  analyzedAt: string;
+}
 
 export default function UploadPage() {
   const router = useRouter();
@@ -10,12 +29,63 @@ export default function UploadPage() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(
+    null
+  );
+  const [extractionFields, setExtractionFields] = useState<ExtractionField[]>(
+    []
+  );
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  // Fetch user profile and data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = Cookies.get("token");
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+
+        // Fetch user profile to determine role
+        const profileRes = await fetch("/api/user/profile", { headers });
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          setUserRole(profileData.user?.role);
+        }
+
+        const [fieldsRes, tagsRes] = await Promise.all([
+          fetch("/api/extraction-fields", { headers }),
+          fetch("/api/tags", { headers }),
+        ]);
+
+        if (fieldsRes.ok) {
+          const fieldsData = await fieldsRes.json();
+          setExtractionFields(fieldsData.extractionFields || []);
+        } else {
+          console.error("Failed to fetch extraction fields:", fieldsRes.status);
+        }
+
+        if (tagsRes.ok) {
+          const tagsData = await tagsRes.json();
+          setTags(tagsData.tags || []);
+        } else {
+          console.error("Failed to fetch tags:", tagsRes.status);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
       setError("");
       setSuccess("");
+      setAnalysisResult(null);
     }
   };
 
@@ -23,16 +93,32 @@ export default function UploadPage() {
     e.preventDefault();
     if (!file) return;
 
+    // Check if we have the required data
+    if (extractionFields.length === 0) {
+      setError(
+        "No extraction fields available. Please contact an administrator."
+      );
+      return;
+    }
+
+    if (tags.length === 0) {
+      setError("No tags available. Please contact an administrator.");
+      return;
+    }
+
     setUploading(true);
     setError("");
     setSuccess("");
+    setAnalysisResult(null);
 
     try {
       const formData = new FormData();
       formData.append("resume", file);
+      formData.append("extractionFields", JSON.stringify(extractionFields));
+      formData.append("tags", JSON.stringify(tags));
 
       const token = Cookies.get("token");
-      const res = await fetch("/api/upload/resume", {
+      const res = await fetch("/api/analyze", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -42,17 +128,24 @@ export default function UploadPage() {
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to upload resume");
+        throw new Error(errorData.error || "Failed to analyze resume");
       }
 
       const result = await res.json();
-      setSuccess("Resume uploaded successfully!");
+      setAnalysisResult(result);
+      setSuccess("Resume analyzed successfully!");
       setFile(null);
     } catch (err: any) {
       setError(err.message);
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleBackToDashboard = () => {
+    const dashboardPath =
+      userRole === "admin" ? "/admin/dashboard" : "/dashboard";
+    router.push(dashboardPath);
   };
 
   return (
@@ -64,7 +157,7 @@ export default function UploadPage() {
               Upload Resume
             </h1>
             <button
-              onClick={() => router.push("/dashboard")}
+              onClick={handleBackToDashboard}
               className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
               Back to Dashboard
@@ -170,14 +263,92 @@ export default function UploadPage() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Debug Information */}
+                  <div className="text-xs text-gray-500 space-y-1">
+                    <p>Loaded {extractionFields.length} extraction fields</p>
+                    <p>Loaded {tags.length} tags</p>
+                  </div>
+
                   <button
                     type="submit"
-                    disabled={!file || uploading}
+                    disabled={
+                      !file ||
+                      uploading ||
+                      extractionFields.length === 0 ||
+                      tags.length === 0
+                    }
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                   >
-                    {uploading ? "Uploading..." : "Upload Resume"}
+                    {uploading ? "Analyzing..." : "Analyze Resume"}
                   </button>
                 </form>
+
+                {/* Analysis Results */}
+                {analysisResult && (
+                  <div className="mt-8 bg-gray-50 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                      Analysis Results
+                    </h3>
+
+                    {/* Summary */}
+                    <div className="mb-6">
+                      <h4 className="font-medium text-gray-700 mb-2">
+                        Summary
+                      </h4>
+                      <p className="text-sm text-gray-600 bg-white p-3 rounded border">
+                        {analysisResult.summary}
+                      </p>
+                    </div>
+
+                    {/* Extracted Information */}
+                    <div className="mb-6">
+                      <h4 className="font-medium text-gray-700 mb-2">
+                        Extracted Information
+                      </h4>
+                      <div className="bg-white rounded border overflow-hidden">
+                        {Object.entries(
+                          analysisResult.extractedInformation
+                        ).map(([key, value]) => (
+                          <div
+                            key={key}
+                            className="flex border-b last:border-b-0"
+                          >
+                            <div className="w-1/3 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700">
+                              {key}
+                            </div>
+                            <div className="w-2/3 px-3 py-2 text-sm text-gray-900">
+                              {value || "Not found"}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Assigned Tags */}
+                    <div className="mb-4">
+                      <h4 className="font-medium text-gray-700 mb-2">
+                        Assigned Tags
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {analysisResult.assignedTags.map((tag, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Analysis Time */}
+                    <div className="text-xs text-gray-500">
+                      Analyzed at:{" "}
+                      {new Date(analysisResult.analyzedAt).toLocaleString()}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

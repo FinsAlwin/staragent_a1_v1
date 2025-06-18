@@ -4,6 +4,7 @@ export interface IStoredImage extends mongoose.Document {
   name: string;
   description: string;
   imageUrl: string;
+  s3Key?: string; // S3 object key for deletion
   uploadedAt: Date;
   uploadedBy: string;
   isActive: boolean;
@@ -23,6 +24,10 @@ const storedImageSchema = new mongoose.Schema<IStoredImage>({
   imageUrl: {
     type: String,
     required: true,
+    trim: true,
+  },
+  s3Key: {
+    type: String,
     trim: true,
   },
   uploadedAt: {

@@ -1,5 +1,6 @@
 import { writeFile, mkdir, readFile, unlink } from "fs/promises";
 import path from "path";
+import fs from "fs";
 
 const UPLOAD_DIR = "public/uploads/faces";
 
@@ -36,13 +37,12 @@ export async function uploadImageToLocal(
     const imageUrl = `/uploads/faces/${uniqueFileName}`;
     const key = uniqueFileName;
 
-    console.log(`Image saved locally: ${filePath}`);
-    console.log(`Image URL: ${imageUrl}`);
-
     return { url: imageUrl, key };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error uploading image to local storage:", error);
-    throw new Error("Failed to upload image to local storage");
+    throw new Error(
+      `Failed to upload image to local storage: ${error.message}`
+    );
   }
 }
 
@@ -62,11 +62,16 @@ export async function getImageFromLocal(key: string): Promise<Buffer> {
 /**
  * Delete image from local storage
  */
-export async function deleteImageFromLocal(key: string): Promise<void> {
+export async function deleteImageFromLocalStorage(key: string): Promise<void> {
   try {
-    const filePath = path.join(process.cwd(), UPLOAD_DIR, key);
+    const filePath = path.join(
+      process.cwd(),
+      "public",
+      "uploads",
+      "faces",
+      key
+    );
     await unlink(filePath);
-    console.log(`Image deleted from local storage: ${key}`);
   } catch (error) {
     console.error(`Error deleting image from local storage: ${key}`, error);
     throw new Error("Failed to delete image from local storage");

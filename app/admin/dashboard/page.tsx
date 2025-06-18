@@ -67,7 +67,7 @@ export default function DashboardPage() {
       actions: [
         {
           label: "Resume Analyzer",
-          href: "/admin/resume-analyzer",
+          href: "/upload",
           variant: "primary",
         },
         { label: "Manage Tags", href: "/admin/tags", variant: "secondary" },
@@ -127,27 +127,18 @@ export default function DashboardPage() {
 
   const fetchStats = async () => {
     try {
-      console.log(
-        "Admin Dashboard - Making API request to /api/admin/dashboard"
-      );
+      const res = await fetch("/api/admin/dashboard");
 
-      const res = await fetch("/api/admin/dashboard", {
-        credentials: "include",
-      });
-
-      console.log("Admin Dashboard - API response status:", res.status);
+      if (res.status === 401) {
+        router.push("/login");
+        return;
+      }
 
       if (!res.ok) {
-        if (res.status === 401) {
-          console.log("Admin Dashboard - 401 response, redirecting to login");
-          router.replace("/login");
-          return;
-        }
-        throw new Error("Failed to fetch dashboard stats");
+        throw new Error("Failed to fetch dashboard data");
       }
 
       const data = await res.json();
-      console.log("Admin Dashboard - API response data:", data);
       setStats(data);
 
       // Fetch face matching stats
@@ -163,14 +154,13 @@ export default function DashboardPage() {
   const fetchFaceMatchingStats = async () => {
     try {
       const response = await fetch("/api/admin/face-matching/images");
-      if (response.ok) {
-        const data = await response.json();
-        setStats((prev) => ({
-          ...prev,
-          totalStoredFaces: data.images?.length || 0,
-        }));
-      }
-    } catch (error) {
+      if (!response.ok) throw new Error("Failed to fetch face matching stats");
+      const data = await response.json();
+      setStats((prev) => ({
+        ...prev,
+        totalStoredFaces: data.images.length,
+      }));
+    } catch (error: any) {
       console.error("Error fetching face matching stats:", error);
     }
   };

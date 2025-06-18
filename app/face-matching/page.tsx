@@ -150,7 +150,10 @@ export default function FaceMatchingPage() {
                           <div className="flex items-center space-x-4">
                             <div className="flex-shrink-0">
                               <img
-                                src={`/api/admin/face-matching/images/${match.id}/image`}
+                                src={
+                                  match.imageUrl ||
+                                  `/api/admin/face-matching/images/${match.id}/image`
+                                }
                                 alt="Matched face"
                                 className="w-16 h-16 object-cover rounded border"
                                 onError={(e) => {

@@ -1,116 +1,124 @@
-import { config } from "dotenv";
-import { resolve } from "path";
-
-const envPath = resolve(process.cwd(), ".env.local");
-console.log("Loading .env.local from:", envPath);
-
-const result = config({ path: envPath });
-console.log("Dotenv config result:", result);
-console.log("NEXT_PUBLIC_MONGODB_URI:", process.env.NEXT_PUBLIC_MONGODB_URI);
-
-import dbConnect from "../lib/db";
+import dotenv from "dotenv";
+import path from "path";
+import connectDB from "../lib/db";
 import User from "../models/User";
-import ExtractionField from "../models/ExtractionField";
 import Tag from "../models/Tag";
+import ExtractionField from "../models/ExtractionField";
 
-// Define constants directly in the script - matching the database schema
-const DEFAULT_EXTRACTION_FIELDS = [
-  {
-    name: "Candidate Name",
-    description: "Full name of the candidate",
-    type: "text",
-    required: true,
-  },
-  {
-    name: "Email Address",
-    description: "Primary email address",
-    type: "text",
-    required: true,
-  },
-  {
-    name: "Phone Number",
-    description: "Primary contact number",
-    type: "text",
-    required: false,
-  },
-  {
-    name: "Years of Experience",
-    description: "Total years of professional experience",
-    type: "number",
-    required: false,
-  },
-  {
-    name: "Education",
-    description: "Highest level of education and major field of study",
-    type: "text",
-    required: false,
-  },
-];
+// Load environment variables
+const envPath = path.resolve(process.cwd(), ".env.local");
+const result = dotenv.config({ path: envPath });
 
-const DEFAULT_TAGS = [
-  { name: "JavaScript" },
-  { name: "Python" },
-  { name: "Java" },
-  { name: "React" },
-  { name: "Node.js" },
-  { name: "SQL" },
-  { name: "Machine Learning" },
-  { name: "DevOps" },
-  { name: "Fashion Modeling" },
-  { name: "Runway" },
-  { name: "Commercial Modeling" },
-  { name: "Photography" },
-  { name: "Brand Representation" },
-  { name: "Communication" },
-  { name: "Project Management" },
-];
+if (result.error) {
+  console.error("Error loading .env.local:", result.error);
+  process.exit(1);
+}
 
-const ADMIN_USER = {
-  username: "admin",
-  email: "admin@example.com",
-  password: "admin123", // Change this in production!
-  role: "admin",
-};
+// Check if MongoDB URI is available
+if (!process.env.NEXT_PUBLIC_MONGODB_URI) {
+  console.error("NEXT_PUBLIC_MONGODB_URI is not set in environment variables");
+  process.exit(1);
+}
 
-async function seed() {
+async function seedDatabase() {
   try {
     // Connect to database
-    await dbConnect();
+    await connectDB();
 
-    // Create admin user if doesn't exist
-    const existingAdmin = await User.findOne({ email: ADMIN_USER.email });
-    let adminUser;
-
-    if (!existingAdmin) {
-      console.log("Creating admin user...");
-      adminUser = await User.create(ADMIN_USER);
-      console.log("Admin user created successfully");
-    } else {
-      console.log("Admin user already exists");
-      adminUser = existingAdmin;
+    // Create admin user
+    const adminUser = await User.findOne({ username: "admin" });
+    if (!adminUser) {
+      const newAdminUser = new User({
+        username: "admin",
+        password: "admin123", // In production, use hashed passwords
+        role: "admin",
+        isActive: true,
+      });
+      await newAdminUser.save();
     }
 
     // Seed extraction fields
-    console.log("Seeding extraction fields...");
-    for (const field of DEFAULT_EXTRACTION_FIELDS) {
-      await ExtractionField.findOneAndUpdate(
-        { name: field.name },
-        { ...field, createdBy: adminUser._id },
-        { upsert: true, new: true }
-      );
+    const extractionFields = [
+      {
+        key: "candidateName",
+        label: "Candidate Name",
+        description: "Full name of the candidate",
+      },
+      {
+        key: "emailAddress",
+        label: "Email Address",
+        description: "Primary email contact",
+      },
+      {
+        key: "phoneNumber",
+        label: "Phone Number",
+        description: "Primary phone contact",
+      },
+      {
+        key: "location",
+        label: "Location",
+        description: "City, State, or Country",
+      },
+      {
+        key: "summary",
+        label: "Professional Summary",
+        description: "Brief professional overview",
+      },
+      {
+        key: "experience",
+        label: "Work Experience",
+        description: "Detailed work history",
+      },
+      {
+        key: "education",
+        label: "Education",
+        description: "Academic background",
+      },
+      {
+        key: "skills",
+        label: "Skills",
+        description: "Technical and soft skills",
+      },
+    ];
+
+    for (const field of extractionFields) {
+      await ExtractionField.findOneAndUpdate({ key: field.key }, field, {
+        upsert: true,
+        new: true,
+      });
     }
-    console.log("Extraction fields seeded successfully");
 
     // Seed tags
-    console.log("Seeding tags...");
-    for (const tag of DEFAULT_TAGS) {
+    const tags = [
+      "JavaScript",
+      "React",
+      "Node.js",
+      "Python",
+      "Java",
+      "C++",
+      "SQL",
+      "MongoDB",
+      "AWS",
+      "Docker",
+      "Kubernetes",
+      "DevOps",
+      "Machine Learning",
+      "Data Science",
+      "Project Management",
+      "Agile",
+      "Scrum",
+      "UI/UX",
+      "Graphic Design",
+      "Marketing",
+    ];
+
+    for (const tagName of tags) {
       await Tag.findOneAndUpdate(
-        { name: tag.name },
-        { ...tag, createdBy: adminUser._id },
+        { name: tagName },
+        { name: tagName },
         { upsert: true, new: true }
       );
     }
-    console.log("Tags seeded successfully");
 
     console.log("Database seeded successfully!");
     process.exit(0);
@@ -120,4 +128,4 @@ async function seed() {
   }
 }
 
-seed();
+seedDatabase();

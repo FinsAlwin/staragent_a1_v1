@@ -12,10 +12,14 @@ const nextConfig = {
     unoptimized: true, // Required for Amplify
   },
   env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
     NEXT_PUBLIC_JWT_SECRET: process.env.NEXT_PUBLIC_JWT_SECRET,
     NEXT_PUBLIC_MONGODB_URI: process.env.NEXT_PUBLIC_MONGODB_URI,
     NEXT_PUBLIC_GEMINI_API_KEY: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
+    NEXT_PUBLIC_AWS_ACCESS_KEY_ID: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+    NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY:
+      process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+    NEXT_PUBLIC_AWS_REGION: process.env.NEXT_PUBLIC_AWS_REGION,
+    NEXT_PUBLIC_S3_BUCKET_NAME: process.env.NEXT_PUBLIC_S3_BUCKET_NAME,
   },
   // For AWS Amplify deployment
   poweredByHeader: false,

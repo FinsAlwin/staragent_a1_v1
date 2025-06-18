@@ -38,7 +38,7 @@ export default function ExtractionFieldsPage() {
       }
 
       const data = await res.json();
-      setFields(data.fields);
+      setFields(Array.isArray(data) ? data : []);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -131,50 +131,57 @@ export default function ExtractionFieldsPage() {
 
             <div className="bg-white shadow overflow-hidden sm:rounded-md">
               <ul className="divide-y divide-gray-200">
-                {fields.map((field) => (
-                  <li key={field._id}>
-                    <div className="px-4 py-4 sm:px-6 hover:bg-gray-50">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-blue-600 truncate">
-                            {field.name}
-                          </p>
-                          {field.description && (
-                            <p className="mt-1 text-sm text-gray-500">
-                              {field.description}
+                {fields && fields.length > 0 ? (
+                  fields.map((field) => (
+                    <li key={field._id}>
+                      <div className="px-4 py-4 sm:px-6 hover:bg-gray-50">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-blue-600 truncate">
+                              {field.name}
                             </p>
-                          )}
-                        </div>
-                        <div className="ml-4 flex-shrink-0 flex items-center space-x-4">
-                          <span className="px-2.5 py-0.5 rounded-full text-xs font-medium capitalize bg-gray-100 text-gray-800">
-                            {field.type}
-                          </span>
-                          {field.required && (
-                            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                              Required
+                            {field.description && (
+                              <p className="mt-1 text-sm text-gray-500">
+                                {field.description}
+                              </p>
+                            )}
+                          </div>
+                          <div className="ml-4 flex-shrink-0 flex items-center space-x-4">
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium capitalize bg-gray-100 text-gray-800">
+                              {field.type}
                             </span>
-                          )}
-                          <button
-                            onClick={() =>
-                              router.push(
-                                `/admin/extraction-fields/${field._id}`
-                              )
-                            }
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(field._id)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            Delete
-                          </button>
+                            {field.required && (
+                              <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                Required
+                              </span>
+                            )}
+                            <button
+                              onClick={() =>
+                                router.push(
+                                  `/admin/extraction-fields/${field._id}`
+                                )
+                              }
+                              className="text-blue-600 hover:text-blue-900"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete(field._id)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </li>
+                  ))
+                ) : (
+                  <li className="px-4 py-8 text-center text-gray-500">
+                    No extraction fields found. Create your first field to get
+                    started.
                   </li>
-                ))}
+                )}
               </ul>
             </div>
           </div>

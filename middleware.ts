@@ -5,30 +5,11 @@ import { jwtVerify } from "jose";
 // List of public routes that don't require authentication
 const publicRoutes = [
   "/login",
-  "/debug-cookies",
   "/api/auth/login",
   "/api/auth/logout",
-  "/api/test-secret",
-  "/api/test-auth",
-  "/api/test-users",
   "/api/analyze",
   "/api/face-matching/match", // Public face matching API
   "/face-matching", // Public face matching demo page
-  "/api/test-simple", // Debug route
-  "/api/debug-env", // Debug route
-  "/api/debug-step", // Step-by-step debug route
-  "/api/test-db", // Database test route
-  "/api/test-login", // Login test route
-  "/api/test-login-simple", // Simple login test route
-  "/api/test-users-db", // Users database test route
-  "/api/test-basic-db", // Basic database test route
-  "/api/test-connectdb", // connectDB function test route
-  "/api/test-connectdb-users", // connectDB users test route
-  "/api/test-basic", // Very basic test route
-  "/api/test-import", // Import test route
-  "/api/test-login-step", // Login step test route
-  "/api/test-env", // Environment variables test route
-  "/api/test-login-env", // Login environment test route
 ];
 
 // Function to verify JWT token
@@ -61,15 +42,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  console.log(`Middleware - Path: ${pathname}, Has token: ${!!token}`);
-
   // Verify token and get payload
   const payload = token ? await verifyToken(token) : null;
-  console.log(
-    `Middleware - Token verification result: ${!!payload}, Role: ${
-      payload?.role
-    }`
-  );
 
   // Handle login page access
   if (pathname === "/login") {
@@ -77,7 +51,6 @@ export async function middleware(request: NextRequest) {
     if (payload) {
       const redirectUrl =
         payload.role === "admin" ? "/admin/dashboard" : "/dashboard";
-      console.log(`Middleware - Redirecting from login to: ${redirectUrl}`);
       return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
     // Allow access to login page if not authenticated
@@ -86,9 +59,6 @@ export async function middleware(request: NextRequest) {
 
   // Check if user is authenticated
   if (!token || !payload) {
-    console.log(
-      `Middleware - No token or invalid payload, redirecting to login`
-    );
     // For API routes, return 401
     if (pathname.startsWith("/api/")) {
       return NextResponse.json(
@@ -102,7 +72,6 @@ export async function middleware(request: NextRequest) {
 
   // Check admin routes
   if (pathname.startsWith("/api/admin/") && payload.role !== "admin") {
-    console.log(`Middleware - Non-admin user trying to access admin API`);
     return NextResponse.json(
       { error: "Admin access required" },
       { status: 403 }
@@ -111,9 +80,6 @@ export async function middleware(request: NextRequest) {
 
   // Check admin page routes
   if (pathname.startsWith("/admin/") && payload.role !== "admin") {
-    console.log(
-      `Middleware - Non-admin user trying to access admin page, redirecting to dashboard`
-    );
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
@@ -121,7 +87,6 @@ export async function middleware(request: NextRequest) {
   if (pathname === "/") {
     const redirectUrl =
       payload.role === "admin" ? "/admin/dashboard" : "/dashboard";
-    console.log(`Middleware - Redirecting from root to: ${redirectUrl}`);
     return NextResponse.redirect(new URL(redirectUrl, request.url));
   }
 

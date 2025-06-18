@@ -16,29 +16,6 @@ if (!cached) {
 }
 
 async function connectDB() {
-  // Enhanced debugging for environment variables
-  console.log("=== CONNECTDB DEBUG ===");
-  console.log("Function: connectDB");
-  console.log("Timestamp:", new Date().toISOString());
-  console.log("NODE_ENV:", process.env.NODE_ENV);
-  console.log(
-    "NEXT_PUBLIC_MONGODB_URI exists:",
-    !!process.env.NEXT_PUBLIC_MONGODB_URI
-  );
-  console.log(
-    "NEXT_PUBLIC_MONGODB_URI length:",
-    process.env.NEXT_PUBLIC_MONGODB_URI?.length
-  );
-  console.log(
-    "NEXT_PUBLIC_MONGODB_URI start:",
-    process.env.NEXT_PUBLIC_MONGODB_URI?.substring(0, 20) + "..."
-  );
-  console.log(
-    "All env keys with MONGO:",
-    Object.keys(process.env).filter((key) => key.includes("MONGO"))
-  );
-  console.log("=== END CONNECTDB DEBUG ===");
-
   // Check environment variable inside the function
   let MONGODB_URI = process.env.NEXT_PUBLIC_MONGODB_URI;
 

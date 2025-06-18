@@ -45,10 +45,6 @@ const getImageDescription = async (
     throw new Error("Invalid MIME type. Must be an image type.");
   }
 
-  console.log(
-    `Getting image description for ${mimeType} image (${base64Image.length} chars)`
-  );
-
   const imagePart = {
     inlineData: {
       mimeType: mimeType,
@@ -65,10 +61,8 @@ const getImageDescription = async (
   };
 
   try {
-    console.log("Sending request to Gemini API...");
     const response = await ai.models.generateContent(request);
     const description = response.text?.trim() || "No description generated";
-    console.log(`Received description: ${description.substring(0, 100)}...`);
     return description;
   } catch (error) {
     console.error("Error getting image description from Gemini:", error);
@@ -82,16 +76,11 @@ const getImageDescription = async (
  */
 const getStoredImages = async () => {
   try {
-    console.log("Connecting to database to fetch stored images...");
     await connectDB();
 
     const images = await StoredImage.find({ isActive: true })
       .sort({ uploadedAt: -1 })
       .select("-__v");
-
-    console.log(
-      `Database query completed. Found ${images.length} active images`
-    );
 
     // Map _id to id for consistency
     const mappedImages = images.map((img) => ({
@@ -105,7 +94,6 @@ const getStoredImages = async () => {
       isActive: img.isActive,
     }));
 
-    console.log(`Successfully mapped ${mappedImages.length} stored images`);
     return mappedImages;
   } catch (error) {
     console.error("Error fetching stored images from database:", error);
@@ -128,7 +116,6 @@ const findSimilarFaces = async (
   const storedImages = await getStoredImages();
 
   if (storedImages.length === 0) {
-    console.log("No stored images found in database");
     return [];
   }
 
@@ -136,9 +123,8 @@ const findSimilarFaces = async (
     id: img._id || img.id,
     name: img.name,
     description: img.description,
+    imageUrl: img.imageUrl,
   }));
-
-  console.log(`Comparing against ${databaseFaceData.length} stored images`);
 
   const prompt = `
     You are a highly advanced facial recognition AI.
@@ -152,15 +138,16 @@ const findSimilarFaces = async (
     Respond with a JSON array of objects. Each object in the array must contain:
     1.  "id": The 'id' of the matching image from the database.
     2.  "name": The 'name' of the matching image from the database.
-    3.  "similarityScore": A numerical score between 0.0 and 1.0 (inclusive), where 1.0 represents a perfect or extremely high similarity, and 0.0 represents no similarity.
+    3.  "imageUrl": The 'imageUrl' of the matching image from the database.
+    4.  "similarityScore": A numerical score between 0.0 and 1.0 (inclusive), where 1.0 represents a perfect or extremely high similarity, and 0.0 represents no similarity.
 
     Only include images in your response that have a similarityScore strictly greater than 0.5.
     If no images in the database meet this similarity threshold, return an empty JSON array: [].
 
     The output MUST be a valid JSON array. For example:
     [
-      {"id": "person1", "name": "John Doe", "similarityScore": 0.85},
-      {"id": "person3", "name": "Jane Smith", "similarityScore": 0.65}
+      {"id": "person1", "name": "John Doe", "imageUrl": "https://example.com/image1.jpg", "similarityScore": 0.85},
+      {"id": "person3", "name": "Jane Smith", "imageUrl": "https://example.com/image3.jpg", "similarityScore": 0.65}
     ]
     Or, if no matches:
     []
@@ -199,12 +186,12 @@ const findSimilarFaces = async (
         (item) =>
           typeof item.id === "string" &&
           typeof item.name === "string" &&
+          typeof item.imageUrl === "string" &&
           typeof item.similarityScore === "number" &&
           item.similarityScore >= 0 &&
           item.similarityScore <= 1
       )
     ) {
-      console.log(`Found ${parsedData.length} matches`);
       return parsedData;
     } else {
       console.error("Parsed data is not in the expected format:", parsedData);

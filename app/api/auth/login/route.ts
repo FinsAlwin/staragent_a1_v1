@@ -6,57 +6,11 @@ import jwt from "jsonwebtoken";
 
 export async function POST(request: NextRequest) {
   try {
-    // Enhanced environment variable debugging
-    console.log("=== ENVIRONMENT VARIABLE DEBUG ===");
-    console.log("Route: /api/auth/login");
-    console.log("Timestamp:", new Date().toISOString());
-    console.log("NODE_ENV:", process.env.NODE_ENV);
-    console.log(
-      "NEXT_PUBLIC_JWT_SECRET:",
-      process.env.NEXT_PUBLIC_JWT_SECRET ? "Defined" : "Undefined"
-    );
-    console.log(
-      "NEXT_PUBLIC_MONGODB_URI:",
-      process.env.NEXT_PUBLIC_MONGODB_URI ? "Defined" : "Undefined"
-    );
-    console.log(
-      "NEXT_PUBLIC_GEMINI_API_KEY:",
-      process.env.NEXT_PUBLIC_GEMINI_API_KEY ? "Defined" : "Undefined"
-    );
-
-    // Try different ways to access environment variables
-    const envVars = {
-      direct: {
-        JWT_SECRET: process.env.NEXT_PUBLIC_JWT_SECRET,
-        MONGODB_URI: process.env.NEXT_PUBLIC_MONGODB_URI,
-      },
-      viaObject: {
-        JWT_SECRET: (process.env as any).NEXT_PUBLIC_JWT_SECRET,
-        MONGODB_URI: (process.env as any).NEXT_PUBLIC_MONGODB_URI,
-      },
-      allKeys: Object.keys(process.env).filter(
-        (key) =>
-          key.includes("JWT") || key.includes("MONGO") || key.includes("GEMINI")
-      ),
-    };
-
-    console.log(
-      "Environment variable test results:",
-      JSON.stringify(envVars, null, 2)
-    );
-    console.log("=== END DEBUG ===");
-
     const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
     if (!JWT_SECRET) {
       return NextResponse.json(
         {
           error: "NEXT_PUBLIC_JWT_SECRET environment variable is not defined",
-          debug: {
-            route: "/api/auth/login",
-            timestamp: new Date().toISOString(),
-            envVars,
-            allProcessEnvKeys: Object.keys(process.env).length,
-          },
         },
         { status: 500 }
       );

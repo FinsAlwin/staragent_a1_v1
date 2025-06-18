@@ -80,6 +80,7 @@ export interface StoredImage {
   name: string;
   description: string;
   imageUrl: string;
+  s3Key?: string; // S3 object key for deletion
   uploadedAt: Date;
   uploadedBy: string;
 }
@@ -87,6 +88,7 @@ export interface StoredImage {
 export interface GeminiSimilarityItem {
   id: string;
   name?: string; // Optional name field for displaying matched face names
+  imageUrl?: string; // S3 URL for displaying the matched image
   similarityScore: number;
 }
 

@@ -262,7 +262,10 @@ export default function FaceMatchingPage() {
                             {/* Display the matched image */}
                             <div className="flex-shrink-0">
                               <img
-                                src={`/api/admin/face-matching/images/${match.id}/image`}
+                                src={
+                                  match.imageUrl ||
+                                  `/api/admin/face-matching/images/${match.id}/image`
+                                }
                                 alt="Matched face"
                                 className="w-12 h-12 object-cover rounded border"
                                 onError={(e) => {

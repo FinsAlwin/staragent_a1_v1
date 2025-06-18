@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "../../../../../lib/db";
 import StoredImage from "../../../../../models/StoredImage";
 import { getImageDescription } from "../../../../../services/faceMatchingService";
-import { uploadImageToLocal } from "../../../../../lib/amplifyStorage";
+import { uploadImageToS3 } from "../../../../../lib/s3Storage";
 
 // GET - Retrieve all stored images
 export async function GET(request: NextRequest) {
@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
       name: img.name,
       description: img.description,
       imageUrl: img.imageUrl,
+      s3Key: img.s3Key,
       uploadedAt: img.uploadedAt,
       uploadedBy: img.uploadedBy,
       isActive: img.isActive,
@@ -69,12 +70,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert file to buffer for local storage
+    // Convert file to buffer for S3 upload
     const arrayBuffer = await imageFile.arrayBuffer();
     const imageBuffer = Buffer.from(arrayBuffer);
 
-    // Upload to local storage
-    const { url: imageUrl, key } = await uploadImageToLocal(
+    // Upload to S3
+    const { url: imageUrl, key } = await uploadImageToS3(
       imageBuffer,
       imageFile.name,
       imageFile.type
@@ -94,37 +95,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new stored image with local file URL
-    const newImage = new StoredImage({
+    // Store image metadata in database
+    const image = new StoredImage({
       name,
       description,
-      imageUrl, // Store local file URL
+      imageUrl,
+      s3Key: key,
       uploadedBy,
+      uploadedAt: new Date(),
       isActive: true,
     });
 
-    await newImage.save();
+    await image.save();
 
-    console.log(`Image stored successfully for: ${name} at ${imageUrl}`);
-
-    return NextResponse.json(
-      {
-        message: "Image stored successfully",
-        image: {
-          id: newImage._id,
-          name: newImage.name,
-          description: newImage.description,
-          imageUrl: newImage.imageUrl,
-          uploadedAt: newImage.uploadedAt,
-          uploadedBy: newImage.uploadedBy,
-        },
+    return NextResponse.json({
+      success: true,
+      image: {
+        id: image._id,
+        name: image.name,
+        description: image.description,
+        imageUrl: image.imageUrl,
+        uploadedAt: image.uploadedAt,
       },
-      { status: 201 }
-    );
+    });
   } catch (error: any) {
     console.error("Error storing image:", error);
+    console.error("Error details:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
     return NextResponse.json(
-      { error: "Failed to store image" },
+      {
+        error: "Failed to store image",
+        details: error.message,
+        type: error.name,
+      },
       { status: 500 }
     );
   }
