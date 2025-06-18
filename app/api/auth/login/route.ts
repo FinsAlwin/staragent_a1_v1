@@ -8,13 +8,16 @@ export async function POST(request: NextRequest) {
   try {
     // Check JWT_SECRET inside the function
     console.log(
-      "JWT_SECRET:",
+      "API route - JWT_SECRET:",
       process.env.JWT_SECRET ? "Defined" : "Undefined"
     );
-
     console.log(
-      "MONGODB_URI:",
+      "API route - MONGODB_URI:",
       process.env.MONGODB_URI ? "Defined" : "Undefined"
+    );
+    console.log(
+      "API route - GEMINI_API_KEY:",
+      process.env.NEXT_PUBLIC_GEMINI_API_KEY ? "Defined" : "Undefined"
     );
 
     const JWT_SECRET = process.env.JWT_SECRET;
