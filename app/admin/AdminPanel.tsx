@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Cookies from "js-cookie";
+import Navbar from "../../components/layout/Navbar";
+import { AppProvider } from "../../context/AppContext";
 
 interface NavItem {
   name: string;
@@ -83,9 +85,30 @@ function ExtractionFieldsIcon(props: any) {
   );
 }
 
+function FaceMatchingIcon(props: any) {
+  return (
+    <svg
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 4.5v.75m0 13.5v.75m8.25-8.25h-.75m-13.5 0h-.75m15.364 6.364l-.53-.53m-12.728 0l-.53.53m12.728-12.728l.53.53m-12.728 0l.53-.53M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+      />
+    </svg>
+  );
+}
+
 const navigation: NavItem[] = [
   { name: "Dashboard", href: "/admin/dashboard", icon: HomeIcon },
   { name: "Users", href: "/admin/users", icon: UsersIcon },
+  { name: "Content Generation", href: "/content-generation", icon: TagIcon },
+  { name: "Face Matching", href: "/face-matching", icon: FaceMatchingIcon },
+  { name: "Resume Analyzer", href: "/upload", icon: ExtractionFieldsIcon },
 ];
 
 export default function AdminPanel({
@@ -119,108 +142,43 @@ export default function AdminPanel({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      {/* Mobile menu */}
-      <div className="lg:hidden">
-        <div className="flex items-center justify-between bg-gray-800/80 backdrop-blur-xl shadow-lg border-b border-gray-700/50 p-4">
-          <button
-            type="button"
-            className="text-gray-300 hover:text-[#90caf9] focus:outline-none focus:ring-2 focus:ring-[#048CE7] focus:ring-offset-2 focus:ring-offset-gray-800 rounded-md p-1 transition-colors duration-200"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+    <AppProvider>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        {/* Mobile menu */}
+        <div className="lg:hidden">
+          <div className="flex items-center justify-between bg-gray-800/80 backdrop-blur-xl shadow-lg border-b border-gray-700/50 p-4">
+            <button
+              type="button"
+              className="text-gray-300 hover:text-[#90caf9] focus:outline-none focus:ring-2 focus:ring-[#048CE7] focus:ring-offset-2 focus:ring-offset-gray-800 rounded-md p-1 transition-colors duration-200"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-gradient-to-r from-[#048CE7] via-[#90caf9] to-[#8f93a9] rounded-lg flex items-center justify-center mr-3 shadow-lg">
               <svg
-                className="w-5 h-5 text-white"
+                className="h-6 w-6"
                 fill="none"
-                stroke="currentColor"
                 viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                />
-              </svg>
-            </div>
-            <span className="text-white font-semibold">Admin Panel</span>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="text-gray-300 hover:text-[#90caf9] transition-colors duration-200"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-          </button>
-        </div>
-        {isMenuOpen && (
-          <nav className="bg-gray-800/90 backdrop-blur-xl shadow-lg border-b border-gray-700/50">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`${
-                  pathname === item.href
-                    ? "bg-gradient-to-r from-[#048CE7] to-[#90caf9] text-white shadow-lg"
-                    : "text-gray-300 hover:bg-gray-700/50 hover:text-[#90caf9]"
-                } block px-4 py-3 text-base font-medium transition-all duration-200`}
-              >
-                <div className="flex items-center">
-                  <item.icon
-                    className="mr-3 h-5 w-5 flex-shrink-0"
-                    aria-hidden="true"
+                {isMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
                   />
-                  {item.name}
-                </div>
-              </Link>
-            ))}
-          </nav>
-        )}
-      </div>
-
-      {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex min-h-0 flex-1 flex-col bg-gray-800/80 backdrop-blur-xl shadow-2xl border-r border-gray-700/50">
-          <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
-            <div className="flex flex-shrink-0 items-center px-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] via-[#90caf9] to-[#8f93a9] rounded-xl flex items-center justify-center mr-3 shadow-lg">
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-[#048CE7] via-[#90caf9] to-[#8f93a9] rounded-lg flex items-center justify-center mr-3 shadow-lg">
                 <svg
-                  className="w-6 h-6 text-white"
+                  className="w-5 h-5 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -233,9 +191,29 @@ export default function AdminPanel({
                   />
                 </svg>
               </div>
-              <span className="text-white font-bold text-xl">Admin Panel</span>
+              <span className="text-white font-semibold">Admin Panel</span>
             </div>
-            <nav className="mt-8 flex-1 space-y-1 px-3">
+            <button
+              onClick={handleLogout}
+              className="text-gray-300 hover:text-[#90caf9] transition-colors duration-200"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+            </button>
+          </div>
+          {isMenuOpen && (
+            <nav className="bg-gray-800/90 backdrop-blur-xl shadow-lg border-b border-gray-700/50">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
@@ -244,26 +222,29 @@ export default function AdminPanel({
                     pathname === item.href
                       ? "bg-gradient-to-r from-[#048CE7] to-[#90caf9] text-white shadow-lg"
                       : "text-gray-300 hover:bg-gray-700/50 hover:text-[#90caf9]"
-                  } group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200`}
+                  } block px-4 py-3 text-base font-medium transition-all duration-200`}
                 >
-                  <item.icon
-                    className="mr-3 h-5 w-5 flex-shrink-0"
-                    aria-hidden="true"
-                  />
-                  {item.name}
+                  <div className="flex items-center">
+                    <item.icon
+                      className="mr-3 h-5 w-5 flex-shrink-0"
+                      aria-hidden="true"
+                    />
+                    {item.name}
+                  </div>
                 </Link>
               ))}
             </nav>
-          </div>
-          <div className="flex flex-shrink-0 border-t border-gray-700/50 p-4">
-            <button
-              onClick={handleLogout}
-              className="group block w-full flex-shrink-0"
-            >
-              <div className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700/50 transition-all duration-200">
-                <div className="w-8 h-8 bg-gray-700/50 rounded-lg flex items-center justify-center">
+          )}
+        </div>
+
+        {/* Desktop sidebar */}
+        <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+          <div className="flex min-h-0 flex-1 flex-col bg-gray-800/80 backdrop-blur-xl shadow-2xl border-r border-gray-700/50">
+            <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
+              <div className="flex flex-shrink-0 items-center px-6">
+                <div className="w-10 h-10 bg-gradient-to-r from-[#048CE7] via-[#90caf9] to-[#8f93a9] rounded-xl flex items-center justify-center mr-3 shadow-lg">
                   <svg
-                    className="h-5 w-5 text-gray-300 group-hover:text-[#90caf9] transition-colors duration-200"
+                    className="w-6 h-6 text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -271,26 +252,73 @@ export default function AdminPanel({
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      strokeWidth={2}
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                     />
                   </svg>
                 </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-300 group-hover:text-[#90caf9] transition-colors duration-200">
-                    Sign out
-                  </p>
-                </div>
+                <span className="text-white font-bold text-xl">
+                  Admin Panel
+                </span>
               </div>
-            </button>
+              <nav className="mt-8 flex-1 space-y-1 px-3">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`${
+                      pathname === item.href
+                        ? "bg-gradient-to-r from-[#048CE7] to-[#90caf9] text-white shadow-lg"
+                        : "text-gray-300 hover:bg-gray-700/50 hover:text-[#90caf9]"
+                    } group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200`}
+                  >
+                    <item.icon
+                      className="mr-3 h-5 w-5 flex-shrink-0"
+                      aria-hidden="true"
+                    />
+                    {item.name}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+            <div className="flex flex-shrink-0 border-t border-gray-700/50 p-4">
+              <button
+                onClick={handleLogout}
+                className="group block w-full flex-shrink-0"
+              >
+                <div className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700/50 transition-all duration-200">
+                  <div className="w-8 h-8 bg-gray-700/50 rounded-lg flex items-center justify-center">
+                    <svg
+                      className="h-5 w-5 text-gray-300 group-hover:text-[#90caf9] transition-colors duration-200"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-300 group-hover:text-[#90caf9] transition-colors duration-200">
+                      Sign out
+                    </p>
+                  </div>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Main content */}
-      <div className="lg:pl-64">
-        <main className="flex-1">{children}</main>
+        {/* Main content */}
+        <div className="lg:pl-64">
+          <Navbar isAdminView={true} />
+          <main className="flex-1">{children}</main>
+        </div>
       </div>
-    </div>
+    </AppProvider>
   );
 }

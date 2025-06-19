@@ -102,17 +102,18 @@ export default function DashboardPage() {
       ],
     },
     {
-      id: "coming-soon-2",
-      title: "Custom Chatbot",
-      description:
-        "Subject-based intelligent chatbot with specialized knowledge",
-      icon: "🤖",
-      status: "inactive",
-      stats: [
-        { label: "Conversations", value: "0" },
-        { label: "Subjects Covered", value: "0" },
+      id: "content-generation",
+      title: "Content Generation",
+      description: "Generate emails or general content using Gemini AI.",
+      icon: "📝",
+      status: "active",
+      actions: [
+        {
+          label: "Content Generation",
+          href: "/content-generation",
+          variant: "primary",
+        },
       ],
-      actions: [{ label: "Coming Soon", href: "#", variant: "outline" }],
     },
   ];
 

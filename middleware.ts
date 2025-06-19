@@ -10,6 +10,7 @@ const publicRoutes = [
   "/api/analyze",
   "/api/face-matching/match", // Public face matching API
   "/face-matching", // Public face matching demo page
+  "/api/content-generation/generate", // Make content generation public
 ];
 
 // Function to verify JWT token
