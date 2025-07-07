@@ -119,9 +119,20 @@ export const generateContentWithGemini = async (
 
   let systemPrompt = "";
   if (category === "Email Template") {
-    systemPrompt = `You are an expert at writing professional email templates. Generate a clear, concise, and effective email based on the following user prompt. Format the output as a ready-to-send email.`;
+    systemPrompt = `You are an expert at writing professional email content. Generate a clear, concise, and effective email body content based on the following user prompt. 
+    
+IMPORTANT REQUIREMENTS:
+- Generate ONLY the email body content (no subject line, no "To:", "From:", "Dear", "Sincerely", "Best regards", etc.)
+- The response must be between 50-100 words exactly
+- Write in a professional tone
+- Focus on the core message only`;
   } else {
-    systemPrompt = `You are an expert content generator. Generate high-quality, relevant content based on the following user prompt.`;
+    systemPrompt = `You are an expert content generator. Generate high-quality, relevant content based on the following user prompt.
+    
+IMPORTANT REQUIREMENTS:
+- The response must be between 50-100 words exactly
+- Write clear, concise content
+- Focus on the core message only`;
   }
 
   const prompt = `${systemPrompt}\n\nUser prompt: ${userPrompt}`;
@@ -135,5 +146,51 @@ export const generateContentWithGemini = async (
     },
   });
 
-  return response?.text || "";
+  let content = response?.text || "";
+
+  // Clean up the content to remove any email formatting elements
+  content = content
+    .replace(/^(To:|From:|Subject:|Dear\s+[^,]+,\s*)/gi, "") // Remove email headers
+    .replace(
+      /(Sincerely|Best regards|Yours truly|Thank you|Regards)[\s,]*$/gi,
+      ""
+    ) // Remove email closings
+    .replace(/^\s*[-–—]\s*/gm, "") // Remove leading dashes
+    .trim();
+
+  // Count words and adjust if needed
+  const wordCount = content
+    .split(/\s+/)
+    .filter((word) => word.length > 0).length;
+
+  if (wordCount < 50 || wordCount > 100) {
+    // If word count is not in range, regenerate with more specific instructions
+    const adjustedPrompt = `${systemPrompt}
+
+CURRENT WORD COUNT: ${wordCount} words
+REQUIRED: Between 50-100 words exactly
+
+User prompt: ${userPrompt}`;
+
+    const adjustedResponse = await ai.models.generateContent({
+      model: "gemini-2.5-flash-preview-04-17",
+      contents: adjustedPrompt,
+      config: {
+        responseMimeType: "text/plain",
+        temperature: 0.7,
+      },
+    });
+
+    content = adjustedResponse?.text || "";
+    content = content
+      .replace(/^(To:|From:|Subject:|Dear\s+[^,]+,\s*)/gi, "")
+      .replace(
+        /(Sincerely|Best regards|Yours truly|Thank you|Regards)[\s,]*$/gi,
+        ""
+      )
+      .replace(/^\s*[-–—]\s*/gm, "")
+      .trim();
+  }
+
+  return content;
 };
