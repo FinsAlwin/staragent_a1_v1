@@ -83,7 +83,7 @@ If the resume text is too short, nonsensical, or clearly not a resume, please in
 `;
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-preview-04-17",
+    model: "gemini-2.5-flash",
     contents: prompt,
     config: {
       responseMimeType: "application/json",
@@ -138,7 +138,7 @@ IMPORTANT REQUIREMENTS:
   const prompt = `${systemPrompt}\n\nUser prompt: ${userPrompt}`;
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-preview-04-17",
+    model: "gemini-2.5-flash",
     contents: prompt,
     config: {
       responseMimeType: "text/plain",
@@ -173,7 +173,7 @@ REQUIRED: Between 50-100 words exactly
 User prompt: ${userPrompt}`;
 
     const adjustedResponse = await ai.models.generateContent({
-      model: "gemini-2.5-flash-preview-04-17",
+      model: "gemini-2.5-flash",
       contents: adjustedPrompt,
       config: {
         responseMimeType: "text/plain",
