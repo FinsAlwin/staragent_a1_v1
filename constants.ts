@@ -65,6 +65,6 @@ export const MOCK_USERS = {
 };
 
 // AI Face Matching Constants
-export const GEMINI_TEXT_MODEL = "gemini-1.5-flash";
+export const GEMINI_TEXT_MODEL = "gemini-2.5-pro";
 export const GEMINI_API_KEY_ERROR =
   "Gemini API key is not set. Please set the NEXT_PUBLIC_GEMINI_API_KEY environment variable.";

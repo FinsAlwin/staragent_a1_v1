@@ -18,6 +18,8 @@ if (!API_KEY) {
   ai = new GoogleGenAI({ apiKey: API_KEY });
 }
 
+const GEMINI_MODEL = "gemini-2.5-pro";
+
 const cleanJsonString = (jsonStr: string): string => {
   let cleaned = jsonStr.trim();
   const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/gm; // Using gm flags instead of s flag
@@ -83,7 +85,7 @@ If the resume text is too short, nonsensical, or clearly not a resume, please in
 `;
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: GEMINI_MODEL,
     contents: prompt,
     config: {
       responseMimeType: "application/json",
@@ -138,7 +140,7 @@ IMPORTANT REQUIREMENTS:
   const prompt = `${systemPrompt}\n\nUser prompt: ${userPrompt}`;
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: GEMINI_MODEL,
     contents: prompt,
     config: {
       responseMimeType: "text/plain",
@@ -173,7 +175,7 @@ REQUIRED: Between 50-100 words exactly
 User prompt: ${userPrompt}`;
 
     const adjustedResponse = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: GEMINI_MODEL,
       contents: adjustedPrompt,
       config: {
         responseMimeType: "text/plain",
