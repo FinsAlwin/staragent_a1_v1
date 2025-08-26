@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { StoredImage, FaceMatchResult } from "../../../types";
 
 export default function FaceMatchingPage() {
@@ -440,12 +441,14 @@ export default function FaceMatchingPage() {
                               >
                                 <div className="flex items-center space-x-3">
                                   <div className="flex-shrink-0">
-                                    <img
+                                    <Image
                                       src={
                                         match.imageUrl ||
                                         `/api/admin/face-matching/images/${match.id}/image`
                                       }
                                       alt="Matched face"
+                                      width={48}
+                                      height={48}
                                       className="w-12 h-12 object-cover rounded-lg border border-gray-600/50"
                                       onError={(e) => {
                                         console.error(
@@ -570,9 +573,11 @@ export default function FaceMatchingPage() {
 
                       {image.imageUrl && (
                         <div className="mb-3">
-                          <img
+                          <Image
                             src={image.imageUrl}
                             alt={image.name}
+                            width={300}
+                            height={128}
                             className="w-full h-32 object-cover rounded-xl border border-gray-600/50"
                             onError={(e) => {
                               console.error(

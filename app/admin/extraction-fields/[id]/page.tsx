@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState, useCallback, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 interface ExtractionField {
@@ -31,13 +31,7 @@ export default function EditExtractionFieldPage({
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    if (!isNew) {
-      fetchField();
-    }
-  }, [isNew]);
-
-  const fetchField = async () => {
+  const fetchField = useCallback(async () => {
     try {
       const res = await fetch(`/api/admin/extraction-fields/${params.id}`, {
         credentials: "include",
@@ -48,7 +42,7 @@ export default function EditExtractionFieldPage({
           router.replace("/login");
           return;
         }
-        throw new Error("Failed to fetch field");
+        throw new Error("Failed to fetch extraction field");
       }
 
       const data = await res.json();
@@ -58,7 +52,11 @@ export default function EditExtractionFieldPage({
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id, router]);
+
+  useEffect(() => {
+    fetchField();
+  }, [fetchField]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

@@ -1,0 +1,66 @@
+{
+  "version": "1",
+  "frontend": {
+    "phases": {
+      "preBuild": {
+        "commands": [
+          "echo 'Installing dependencies...'",
+          "npm ci --legacy-peer-deps --no-audit --ignore-scripts"
+        ]
+      },
+      "build": {
+        "commands": [
+          "echo 'Building the application...'",
+          "npm run build"
+        ]
+      }
+    },
+    "artifacts": {
+      "baseDirectory": ".next",
+      "files": ["**/*"]
+    },
+    "cache": {
+      "paths": [
+        "node_modules/**/*",
+        ".next/cache/**/*"
+      ]
+    }
+  },
+  "functions": {
+    "api": {
+      "timeout": 120,
+      "memory": 1024,
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=1024"
+      }
+    }
+  },
+  "customHeaders": [
+    {
+      "pattern": "/api/analyze",
+      "headers": [
+        {
+          "key": "X-Request-Timeout",
+          "value": "120000"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "pattern": "/api/upload/resume",
+      "headers": [
+        {
+          "key": "X-Request-Timeout",
+          "value": "120000"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ]
+} 

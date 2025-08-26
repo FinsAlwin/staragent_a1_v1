@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { FaceMatchResult } from "../../types";
 
 export default function FaceMatchingPage() {
@@ -145,12 +146,14 @@ export default function FaceMatchingPage() {
                       >
                         <div className="flex items-center space-x-4">
                           <div className="flex-shrink-0">
-                            <img
+                            <Image
                               src={
                                 match.imageUrl ||
                                 `/api/admin/face-matching/images/${match.id}/image`
                               }
                               alt="Matched face"
+                              width={64}
+                              height={64}
                               className="w-16 h-16 object-cover rounded border border-gray-700/50"
                               onError={(e) => {
                                 console.error(

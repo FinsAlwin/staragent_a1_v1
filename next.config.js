@@ -24,6 +24,13 @@ const nextConfig = {
   // For AWS Amplify deployment
   poweredByHeader: false,
   compress: true,
+
+  // Increase timeout for long-running operations
+  serverRuntimeConfig: {
+    // Increase timeout for server-side operations
+    timeout: 120000, // 2 minutes
+  },
+
   // Handle file uploads and CORS
   async headers() {
     return [
@@ -39,6 +46,8 @@ const nextConfig = {
             key: "Access-Control-Allow-Headers",
             value: "Content-Type, Authorization",
           },
+          // Add timeout headers
+          { key: "X-Request-Timeout", value: "120000" },
         ],
       },
     ];

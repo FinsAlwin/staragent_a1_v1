@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
@@ -117,11 +117,21 @@ export default function DashboardPage() {
     },
   ];
 
-  useEffect(() => {
-    fetchStats();
+  const fetchFaceMatchingStats = useCallback(async () => {
+    try {
+      const response = await fetch("/api/admin/face-matching/images");
+      if (!response.ok) throw new Error("Failed to fetch face matching stats");
+      const data = await response.json();
+      setStats((prev) => ({
+        ...prev,
+        totalStoredFaces: data.images.length,
+      }));
+    } catch (error: any) {
+      console.error("Error fetching face matching stats:", error);
+    }
   }, []);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/dashboard");
 
@@ -145,21 +155,11 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router, fetchFaceMatchingStats]);
 
-  const fetchFaceMatchingStats = async () => {
-    try {
-      const response = await fetch("/api/admin/face-matching/images");
-      if (!response.ok) throw new Error("Failed to fetch face matching stats");
-      const data = await response.json();
-      setStats((prev) => ({
-        ...prev,
-        totalStoredFaces: data.images.length,
-      }));
-    } catch (error: any) {
-      console.error("Error fetching face matching stats:", error);
-    }
-  };
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

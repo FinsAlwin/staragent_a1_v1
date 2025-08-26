@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
@@ -17,11 +17,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchUserData();
-  }, []);
-
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
       const token = Cookies.get("token");
       if (!token) {
@@ -51,7 +47,11 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    fetchUserData();
+  }, [fetchUserData]);
 
   const handleSignOut = async () => {
     try {
@@ -308,7 +308,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <p className="text-gray-600 mb-6">
-                We're working on exciting new features. Stay tuned for more
+                We&apos;re working on exciting new features. Stay tuned for more
                 AI-powered tools!
               </p>
               <button

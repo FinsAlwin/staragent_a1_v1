@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 interface ExtractionField {
@@ -19,11 +19,7 @@ export default function ExtractionFieldsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchFields();
-  }, []);
-
-  const fetchFields = async () => {
+  const fetchFields = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/extraction-fields", {
         credentials: "include",
@@ -44,7 +40,11 @@ export default function ExtractionFieldsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    fetchFields();
+  }, [fetchFields]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this field?")) {

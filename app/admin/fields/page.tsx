@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
@@ -17,11 +17,7 @@ export default function FieldsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchFields();
-  }, []);
-
-  const fetchFields = async () => {
+  const fetchFields = useCallback(async () => {
     try {
       const token = Cookies.get("token");
       if (!token) {
@@ -29,7 +25,7 @@ export default function FieldsPage() {
         return;
       }
 
-      const res = await fetch("/api/admin/fields", {
+      const res = await fetch("/api/extraction-fields", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -45,13 +41,17 @@ export default function FieldsPage() {
       }
 
       const data = await res.json();
-      setFields(data.fields);
+      setFields(data.extractionFields || []);
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    fetchFields();
+  }, [fetchFields]);
 
   if (loading) {
     return (

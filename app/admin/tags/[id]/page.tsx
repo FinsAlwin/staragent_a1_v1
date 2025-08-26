@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 interface Tag {
@@ -17,16 +17,20 @@ export default function EditTagPage({ params }: { params: { id: string } }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchTag();
-  }, [params.id]);
-
-  const fetchTag = async () => {
+  const fetchTag = useCallback(async () => {
     try {
-      const res = await fetch(`/api/admin/tags/${params.id}`);
+      const res = await fetch(`/api/admin/tags/${params.id}`, {
+        credentials: "include",
+      });
+
       if (!res.ok) {
+        if (res.status === 401) {
+          router.replace("/login");
+          return;
+        }
         throw new Error("Failed to fetch tag");
       }
+
       const data = await res.json();
       setTag(data);
     } catch (err: any) {
@@ -34,7 +38,11 @@ export default function EditTagPage({ params }: { params: { id: string } }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id, router]);
+
+  useEffect(() => {
+    fetchTag();
+  }, [fetchTag]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

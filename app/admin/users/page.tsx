@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
@@ -17,14 +17,10 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/users", {
-        credentials: "include", // Include cookies in the request
+        credentials: "include",
       });
 
       if (!res.ok) {
@@ -36,13 +32,17 @@ export default function UsersPage() {
       }
 
       const data = await res.json();
-      setUsers(data.users);
+      setUsers(data.users || []);
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleDelete = async (userId: string, username: string) => {
     if (

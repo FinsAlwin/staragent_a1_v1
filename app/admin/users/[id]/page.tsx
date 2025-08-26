@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState, useCallback, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 interface User {
@@ -20,11 +20,7 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const res = await fetch(`/api/admin/users/${params.id}`, {
         credentials: "include",
@@ -45,7 +41,11 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id, router]);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
