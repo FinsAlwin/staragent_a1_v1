@@ -86,6 +86,8 @@ export async function POST(request: NextRequest) {
         extractionFieldsData
       ) as ExtractionFieldType[];
     } catch (error) {
+      console.error("Failed to parse extraction fields:", error);
+      console.error("Raw extraction fields data:", extractionFieldsData);
       return NextResponse.json(
         { error: "Invalid extraction fields format. Must be valid JSON." },
         {
@@ -98,6 +100,8 @@ export async function POST(request: NextRequest) {
     try {
       availableTags = JSON.parse(tagsData) as TagType[];
     } catch (error) {
+      console.error("Failed to parse tags:", error);
+      console.error("Raw tags data:", tagsData);
       return NextResponse.json(
         { error: "Invalid tags format. Must be valid JSON." },
         {
@@ -157,10 +161,24 @@ export async function POST(request: NextRequest) {
 
     // Extract text from the resume
     let resumeText = "";
-    if (fileType.includes("pdf")) {
-      resumeText = await parsePdfToText(arrayBuffer);
-    } else {
-      resumeText = await parseDocxToText(arrayBuffer);
+    try {
+      if (fileType.includes("pdf")) {
+        resumeText = await parsePdfToText(arrayBuffer);
+      } else {
+        resumeText = await parseDocxToText(arrayBuffer);
+      }
+    } catch (parseError) {
+      console.error("Error parsing file:", parseError);
+      return NextResponse.json(
+        {
+          error:
+            "Failed to parse the uploaded file. Please ensure it's a valid PDF or DOCX file.",
+        },
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
+      );
     }
 
     if (!resumeText.trim()) {
@@ -176,26 +194,63 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Analyze the resume
-    const result = await analyzeResumeWithGemini(
-      resumeText,
-      extractionFields,
-      availableTags
+    console.log(
+      `Processing resume with ${extractionFields.length} fields and ${availableTags.length} tags`
     );
+    console.log(`Extracted text length: ${resumeText.length} characters`);
+
+    // Analyze the resume
+    let result;
+    try {
+      result = await analyzeResumeWithGemini(
+        resumeText,
+        extractionFields,
+        availableTags
+      );
+    } catch (analysisError: any) {
+      console.error("Gemini analysis error:", analysisError);
+
+      let errorMessage = "AI analysis failed";
+      let statusCode = 500;
+
+      if (analysisError.message.includes("JSON")) {
+        errorMessage =
+          "AI analysis failed due to response format issues. Please try again.";
+        statusCode = 422;
+      } else if (analysisError.message.includes("API Key")) {
+        errorMessage =
+          "AI service configuration error. Please contact support.";
+        statusCode = 503;
+      } else if (analysisError.message.includes("retry")) {
+        errorMessage =
+          "AI analysis is temporarily unavailable. Please try again in a few moments.";
+        statusCode = 503;
+      }
+
+      return NextResponse.json(
+        { error: errorMessage },
+        {
+          status: statusCode,
+          headers: corsHeaders,
+        }
+      );
+    }
 
     const analysisResult = {
       ...result,
       analyzedAt: new Date().toISOString(),
     };
 
+    console.log("Analysis completed successfully");
     return NextResponse.json(analysisResult, {
       headers: corsHeaders,
     });
   } catch (error: any) {
-    console.error("Error processing resume:", error);
+    console.error("Unexpected error processing resume:", error);
     return NextResponse.json(
       {
-        error: error.message || "An error occurred while processing the resume",
+        error:
+          "An unexpected error occurred while processing the resume. Please try again.",
       },
       {
         status: 500,

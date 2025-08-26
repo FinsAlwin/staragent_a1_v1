@@ -127,16 +127,59 @@ export default function UploadPage() {
       });
 
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to analyze resume");
+        let errorMessage = "Failed to analyze resume";
+
+        try {
+          const errorData = await res.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (parseError) {
+          // If we can't parse the error response, use the status text
+          if (res.status === 422) {
+            errorMessage =
+              "AI analysis failed due to response format issues. Please try again.";
+          } else if (res.status === 503) {
+            errorMessage =
+              "AI service is temporarily unavailable. Please try again in a few moments.";
+          } else if (res.status === 500) {
+            errorMessage =
+              "An internal server error occurred. Please try again.";
+          } else {
+            errorMessage = `Server error (${res.status}): ${res.statusText}`;
+          }
+        }
+
+        throw new Error(errorMessage);
       }
 
-      const result = await res.json();
+      let result;
+      try {
+        result = await res.json();
+      } catch (parseError) {
+        console.error("Failed to parse response:", parseError);
+        throw new Error(
+          "Received invalid response from server. Please try again."
+        );
+      }
+
+      // Validate the result structure
+      if (
+        !result ||
+        typeof result.summary !== "string" ||
+        !result.extractedInformation ||
+        !Array.isArray(result.assignedTags)
+      ) {
+        console.error("Invalid result structure:", result);
+        throw new Error(
+          "Received incomplete analysis results. Please try again."
+        );
+      }
+
       setAnalysisResult(result);
       setSuccess("Resume analyzed successfully!");
       setFile(null);
     } catch (err: any) {
-      setError(err.message);
+      console.error("Upload error:", err);
+      setError(err.message || "An unexpected error occurred");
     } finally {
       setUploading(false);
     }
