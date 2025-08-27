@@ -1,21 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyAuth } from "@/lib/auth";
 import dbConnect from "../../../lib/db";
 import AnalysisJob from "../../../models/AnalysisJob";
-import { jobProcessor } from "../../../services/jobProcessor";
 import {
   type ExtractionField as ExtractionFieldType,
   type Tag as TagType,
 } from "../../../types";
+import { jobProcessor } from "../../../services/jobProcessor";
 
 // CORS headers for cross-origin requests
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*", // Allow all origins - you can restrict this to specific domains
+  "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Max-Age": "86400", // 24 hours
-  // Add timeout headers
-  "X-Request-Timeout": "120000",
-  "Cache-Control": "no-cache, no-store, must-revalidate",
+  "Access-Control-Max-Age": "86400",
 };
 
 // Handle preflight OPTIONS request
@@ -26,20 +24,33 @@ export async function OPTIONS(request: NextRequest) {
   });
 }
 
-// Configure for async processing - no timeout issues
-export const maxDuration = 30; // Standard Amplify limit
+// Configure timeout for this route - keep it short since we return immediately
+export const maxDuration = 30; // 30 seconds
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // Public API - no authentication required
-    // Note: This endpoint is designed to be used by external projects
+    // Connect to database
+    await dbConnect();
+
+    // Verify authentication (optional)
+    let userId: string | undefined;
+    try {
+      const payload = await verifyAuth(request);
+      userId = payload?.userId as string | undefined;
+    } catch (error) {
+      // Continue without auth for demo purposes
+      console.log("No authentication provided");
+    }
 
     // Check if the request is multipart/form-data
     if (!request.headers.get("content-type")?.includes("multipart/form-data")) {
       return NextResponse.json(
         { error: "Request must be multipart/form-data" },
-        { status: 400, headers: corsHeaders }
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
       );
     }
 
@@ -52,21 +63,30 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (!file) {
       return NextResponse.json(
         { error: "No resume file provided" },
-        { status: 400, headers: corsHeaders }
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
       );
     }
 
     if (!extractionFieldsData) {
       return NextResponse.json(
         { error: "No extraction fields provided" },
-        { status: 400, headers: corsHeaders }
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
       );
     }
 
     if (!tagsData) {
       return NextResponse.json(
         { error: "No tags provided" },
-        { status: 400, headers: corsHeaders }
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
       );
     }
 
@@ -81,7 +101,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     } catch (error) {
       return NextResponse.json(
         { error: "Invalid extraction fields format. Must be valid JSON." },
-        { status: 400, headers: corsHeaders }
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
       );
     }
 
@@ -90,52 +113,50 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     } catch (error) {
       return NextResponse.json(
         { error: "Invalid tags format. Must be valid JSON." },
-        { status: 400, headers: corsHeaders }
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
       );
     }
 
-    // Validate that we have tags and extraction fields
-    if (availableTags.length === 0) {
-      return NextResponse.json(
-        { error: "At least one tag must be provided" },
-        { status: 400, headers: corsHeaders }
-      );
-    }
-
-    if (extractionFields.length === 0) {
-      return NextResponse.json(
-        { error: "At least one extraction field must be provided" },
-        { status: 400, headers: corsHeaders }
-      );
-    }
-
+    // Validate file
     if (!(file instanceof Blob)) {
       return NextResponse.json(
         { error: "Invalid file format" },
-        { status: 400, headers: corsHeaders }
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
       );
     }
 
-    // Get the file type from the Blob
     const fileType = file.type;
+    const fileSize = file.size;
+    const fileName = (file as File).name || "resume";
 
     // Check file type
     if (!fileType.includes("pdf") && !fileType.includes("docx")) {
       return NextResponse.json(
         { error: "Invalid file type. Only PDF and DOCX files are supported" },
-        { status: 400, headers: corsHeaders }
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
       );
     }
 
     // Check file size (limit to 10MB)
-    const fileSize = file.size;
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (fileSize > maxSize) {
       return NextResponse.json(
         {
           error: "File size too large. Please upload a file smaller than 10MB.",
         },
-        { status: 400, headers: corsHeaders }
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
       );
     }
 
@@ -148,55 +169,59 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const arrayBuffer = await file.arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
 
-    // Create job in database
-    await dbConnect();
-    await AnalysisJob.create({
+    // Create job record
+    const job = await AnalysisJob.create({
       jobId,
-      userId: undefined, // Public API - no user authentication
-      fileName: (file as File).name || "unknown",
+      userId,
+      fileName,
       fileSize,
       fileType,
       status: "queued",
       progress: 0,
       extractionFields,
       tags: availableTags,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     });
 
-    // Start background processing
-    jobProcessor.addJob({
-      jobId,
-      fileBuffer,
-      fileType,
-      extractionFields,
-      tags: availableTags,
+    // Start processing immediately (but don't wait for completion)
+    // In a production environment, you might use a proper job queue like Redis/Bull
+    setImmediate(async () => {
+      try {
+        await jobProcessor.processJob({
+          jobId,
+          fileBuffer,
+          fileType,
+          extractionFields,
+          tags: availableTags,
+        });
+      } catch (error) {
+        console.error(`Background processing failed for job ${jobId}:`, error);
+      }
     });
 
     // Return immediately with job ID
     return NextResponse.json(
       {
-        success: true,
-        message: "Resume analysis started successfully",
-        jobId: jobId,
+        jobId,
         status: "queued",
-        statusEndpoint: `/api/analyze-status/${jobId}`,
+        message: "Resume analysis started. Use the job ID to check progress.",
         estimatedTime: "2-5 minutes",
-        instructions:
-          "Use the status endpoint to check progress and get results",
+        checkStatusUrl: `/api/analyze-status/${jobId}`,
       },
-      { status: 202, headers: corsHeaders } // 202 Accepted
+      {
+        headers: corsHeaders,
+      }
     );
   } catch (error: any) {
-    console.error("Error starting resume analysis:", error);
-
+    console.error("Error creating analysis job:", error);
     return NextResponse.json(
       {
         error:
           "An error occurred while starting the analysis. Please try again.",
-        details: error.message,
       },
-      { status: 500, headers: corsHeaders }
+      {
+        status: 500,
+        headers: corsHeaders,
+      }
     );
   }
 }

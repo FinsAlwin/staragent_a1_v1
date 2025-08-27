@@ -8,6 +8,7 @@ const publicRoutes = [
   "/api/auth/login",
   "/api/auth/logout",
   "/api/analyze",
+  "/api/analyze-status", // Public job status API
   "/api/face-matching/match", // Public face matching API
   "/face-matching", // Public face matching demo page
   "/api/content-generation/generate", // Make content generation public
