@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "../../../lib/db";
-import AnalysisJob from "../../../models/AnalysisJob";
-import { jobProcessor } from "../../../services/jobProcessor";
+import {
+  parsePdfToText,
+  parseDocxToText,
+} from "../../../services/fileParserService";
+import { analyzeResumeWithGemini } from "../../../services/geminiService";
 import {
   type ExtractionField as ExtractionFieldType,
   type Tag as TagType,
@@ -26,8 +28,8 @@ export async function OPTIONS(request: NextRequest) {
   });
 }
 
-// Configure for async processing - no timeout issues
-export const maxDuration = 30; // Standard Amplify limit
+// Configure for synchronous processing
+export const maxDuration = 120; // 2 minutes for processing
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -139,61 +141,61 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Generate unique job ID
-    const jobId = `job_${Date.now()}_${Math.random()
-      .toString(36)
-      .substr(2, 9)}`;
-
     // Convert file to buffer for processing
     const arrayBuffer = await file.arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
 
-    // Create job in database
-    await dbConnect();
-    await AnalysisJob.create({
-      jobId,
-      userId: undefined, // Public API - no user authentication
-      fileName: (file as File).name || "unknown",
-      fileSize,
-      fileType,
-      status: "queued",
-      progress: 0,
-      extractionFields,
-      tags: availableTags,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+    // Extract text from the file
+    let extractedText: string;
 
-    // Start background processing
-    jobProcessor.addJob({
-      jobId,
-      fileBuffer,
-      fileType,
-      extractionFields,
-      tags: availableTags,
-    });
+    if (fileType.includes("pdf")) {
+      extractedText = await parsePdfToText(fileBuffer);
+    } else if (fileType.includes("docx")) {
+      extractedText = await parseDocxToText(fileBuffer);
+    } else {
+      return NextResponse.json(
+        { error: "Unsupported file type" },
+        { status: 400, headers: corsHeaders }
+      );
+    }
 
-    // Return immediately with job ID
+    if (!extractedText || extractedText.trim().length === 0) {
+      return NextResponse.json(
+        {
+          error:
+            "Could not extract text from the file. Please ensure the file contains readable text.",
+        },
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    // Analyze the resume with Gemini
+    const analysisResult = await analyzeResumeWithGemini(
+      extractedText,
+      extractionFields,
+      availableTags
+    );
+
+    // Return the analysis result immediately
     return NextResponse.json(
       {
         success: true,
-        message: "Resume analysis started successfully",
-        jobId: jobId,
-        status: "queued",
-        statusEndpoint: `/api/analyze-status/${jobId}`,
-        estimatedTime: "2-5 minutes",
-        instructions:
-          "Use the status endpoint to check progress and get results",
+        message: "Resume analysis completed successfully",
+        result: analysisResult,
+        fileName: (file as File).name || "unknown",
+        fileSize,
+        fileType,
+        extractedTextLength: extractedText.length,
       },
-      { status: 202, headers: corsHeaders } // 202 Accepted
+      { status: 200, headers: corsHeaders }
     );
   } catch (error: any) {
-    console.error("Error starting resume analysis:", error);
+    console.error("Error processing resume analysis:", error);
 
     return NextResponse.json(
       {
         error:
-          "An error occurred while starting the analysis. Please try again.",
+          "An error occurred while processing the resume. Please try again.",
         details: error.message,
       },
       { status: 500, headers: corsHeaders }

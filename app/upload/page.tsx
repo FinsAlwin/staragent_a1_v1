@@ -117,53 +117,23 @@ export default function UploadPage() {
       formData.append("extractionFields", JSON.stringify(extractionFields));
       formData.append("tags", JSON.stringify(tags));
 
-      const token = Cookies.get("token");
       const res = await fetch("/api/analyze", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: formData,
       });
 
       if (!res.ok) {
         let errorMessage = "Failed to analyze resume";
-        let shouldRetryAsync = false;
 
         try {
           const errorData = await res.json();
           errorMessage = errorData.error || errorMessage;
-
-          // Check if this is a timeout or large file issue that should use async
-          if (
-            res.status === 408 || // Timeout
-            res.status === 413 || // Payload too large
-            (errorData.suggestion && errorData.suggestion.includes("async")) ||
-            errorData.asyncEndpoint
-          ) {
-            shouldRetryAsync = true;
-
-            // Show user the option to retry with async
-            const useAsync = confirm(
-              `${errorMessage}\n\nWould you like to try with background processing instead? This will handle large files and longer processing times better.`
-            );
-
-            if (useAsync) {
-              // Redirect to async processing
-              window.location.href = "/upload-async";
-              return;
-            }
-          }
         } catch (parseError) {
           // If we can't parse the error response, use the status text
           if (res.status === 408) {
-            errorMessage =
-              "Request timed out. Try the async upload for better results.";
-            shouldRetryAsync = true;
+            errorMessage = "Request timed out. Please try again.";
           } else if (res.status === 413) {
-            errorMessage =
-              "File too large. Use the async upload for large files.";
-            shouldRetryAsync = true;
+            errorMessage = "File too large. Please upload a smaller file.";
           } else if (res.status === 422) {
             errorMessage =
               "AI analysis failed due to response format issues. Please try again.";
@@ -176,30 +146,9 @@ export default function UploadPage() {
           } else {
             errorMessage = `Server error (${res.status}): ${res.statusText}`;
           }
-
-          if (shouldRetryAsync) {
-            errorMessage +=
-              " Consider using the async upload page for better reliability.";
-          }
         }
 
         throw new Error(errorMessage);
-      }
-
-      // Handle async job response (202 Accepted)
-      if (res.status === 202) {
-        const jobData = await res.json();
-
-        if (jobData.success && jobData.jobId) {
-          // Show success message and redirect to async processing
-          alert(
-            `✅ Resume analysis started successfully!\n\nJob ID: ${jobData.jobId}\nEstimated time: ${jobData.estimatedTime}\n\nRedirecting to background processing page...`
-          );
-
-          // Redirect to async page with job ID
-          window.location.href = `/upload-async?jobId=${jobData.jobId}`;
-          return;
-        }
       }
 
       let result;
@@ -215,9 +164,10 @@ export default function UploadPage() {
       // Validate the result structure
       if (
         !result ||
-        typeof result.summary !== "string" ||
-        !result.extractedInformation ||
-        !Array.isArray(result.assignedTags)
+        !result.result ||
+        typeof result.result.summary !== "string" ||
+        !result.result.extractedInformation ||
+        !Array.isArray(result.result.assignedTags)
       ) {
         console.error("Invalid result structure:", result);
         throw new Error(
@@ -225,7 +175,7 @@ export default function UploadPage() {
         );
       }
 
-      setAnalysisResult(result);
+      setAnalysisResult(result.result);
       setSuccess("Resume analyzed successfully!");
       setFile(null);
     } catch (err: any) {
