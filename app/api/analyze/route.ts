@@ -29,7 +29,7 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 // Configure for synchronous processing
-export const maxDuration = 120; // 2 minutes for processing
+export const maxDuration = 60; // 1 minute for processing (reduced from 2 minutes)
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {

@@ -18,7 +18,8 @@ if (!API_KEY) {
   ai = new GoogleGenAI({ apiKey: API_KEY });
 }
 
-const GEMINI_MODEL = "gemini-2.5-pro";
+// Use faster model for better performance
+const GEMINI_MODEL = "gemini-1.5-flash"; // Much faster than gemini-2.5-pro
 
 const cleanJsonString = (jsonStr: string): string => {
   let cleaned = jsonStr.trim();
@@ -107,42 +108,32 @@ export const analyzeResumeWithGemini = async (
 
   const tagList = availableTags.map((tag) => tag.name).join(", ");
 
-  const prompt = `You are an expert HR assistant specializing in resume analysis.
-Given the following resume text, please perform these tasks:
+  const prompt = `Analyze this resume and extract information. Return ONLY valid JSON.
 
-1.  **Summary:** Provide a concise professional summary of the candidate's profile, experience, and key skills. The summary should be between 300 and 400 words.
-2.  **Information Extraction:** Extract the following pieces of information. For each field, provide the extracted value as a string. If a piece of information is not found or not applicable, use "N/A".
-    ${fieldInstructions}
-3.  **Tagging:** From the predefined list of tags below, assign up to 5-7 most relevant tags to this resume. Return an array of strings for the tags.
-    Predefined Tags: ${tagList}
+Tasks:
+1. Summary: 200-300 word professional summary
+2. Extract: ${fieldInstructions}
+3. Tags: Select 3-5 relevant tags from: ${tagList}
 
-Resume Text:
----
+Resume:
 ${resumeText}
----
 
-IMPORTANT: You must respond with ONLY valid JSON. Do not include any text before or after the JSON object.
-The response must be a single, valid JSON object with the following structure:
+JSON format:
 {
-  "summary": "string (300-400 words)",
+  "summary": "string",
   "extractedInformation": {
     ${fieldsToExtract
-      .map((f) => `"${f.key}": "string (extracted value or N/A)"`)
+      .map((f) => `"${f.key}": "string or N/A"`)
       .join(",\\n    ")}
   },
-  "assignedTags": ["string", "string", ...]
+  "assignedTags": ["string", ...]
 }
 
-Ensure the keys in "extractedInformation" exactly match the requested field keys: ${fieldsToExtract
-    .map((f) => `"${f.key}"`)
-    .join(", ")}.
-Ensure "assignedTags" is an array of strings, selected from the predefined list.
-If the resume text is too short, nonsensical, or clearly not a resume, please indicate this in the summary and provide "N/A" for all extracted fields and an empty array for tags.
-`;
+Use "N/A" for missing info. Select tags from: ${tagList}`;
 
   // Retry logic for malformed JSON responses
   let attempts = 0;
-  const maxAttempts = 3;
+  const maxAttempts = 2; // Reduced from 3 to 2 for faster response
 
   while (attempts < maxAttempts) {
     try {
@@ -151,7 +142,8 @@ If the resume text is too short, nonsensical, or clearly not a resume, please in
         contents: prompt,
         config: {
           responseMimeType: "application/json",
-          temperature: 0.2,
+          temperature: 0.1, // Lower temperature for faster, more consistent responses
+          maxOutputTokens: 2048, // Limit output for faster response
         },
       });
 
