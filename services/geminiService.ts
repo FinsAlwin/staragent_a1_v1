@@ -18,8 +18,8 @@ if (!API_KEY) {
   ai = new GoogleGenAI({ apiKey: API_KEY });
 }
 
-// Use faster model for better performance
-const GEMINI_MODEL = "gemini-1.5-flash"; // Much faster than gemini-2.5-pro
+// Use latest fastest model for best performance
+const GEMINI_MODEL = "gemini-2.5-flash"; // Latest Gemini 2.5 Flash model
 
 const cleanJsonString = (jsonStr: string): string => {
   let cleaned = jsonStr.trim();

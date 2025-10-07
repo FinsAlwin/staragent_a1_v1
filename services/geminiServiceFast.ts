@@ -18,7 +18,7 @@ if (!API_KEY) {
   ai = new GoogleGenAI({ apiKey: API_KEY });
 }
 
-const GEMINI_MODEL = "gemini-2.5-pro";
+const GEMINI_MODEL = "gemini-2.5-flash";
 
 // Faster JSON cleaning for sync processing
 const fastCleanJsonString = (jsonStr: string): string => {
